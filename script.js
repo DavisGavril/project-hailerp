@@ -51,7 +51,8 @@ function showSuccessState() {
 }
 
 async function submitToBackend(endpoint, payload) {
-  const response = await fetch(`http://localhost:8000${endpoint}`, {
+  const apiBase = window.location.origin.startsWith('file://') || window.location.origin === 'null' ? 'http://localhost:8000' : window.location.origin;
+  const response = await fetch(`${apiBase}${endpoint}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -59,6 +60,7 @@ async function submitToBackend(endpoint, payload) {
   const data = await response.json();
   return { response, data };
 }
+
 
 const form = document.getElementById('loginForm');
 const btn = document.getElementById('signInBtn');

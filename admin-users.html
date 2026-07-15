@@ -321,7 +321,8 @@
 <script>
   async function getUsers() {
     try {
-      const response = await fetch('http://localhost:8000/api/users');
+      const apiBase = window.location.origin.startsWith('file://') || window.location.origin === 'null' ? 'http://localhost:8000' : window.location.origin;
+      const response = await fetch(`${apiBase}/api/users`);
       if (!response.ok) throw new Error('Failed to load users');
       return await response.json();
     } catch (error) {
@@ -393,7 +394,8 @@
       const mockId = role === 'student' ? ('73112220' + Math.floor(5000 + Math.random() * 4999)) : ('EMP-2026-' + Math.floor(100 + Math.random() * 899));
 
       try {
-        const response = await fetch('http://localhost:8000/api/signup', {
+        const apiBase = window.location.origin.startsWith('file://') || window.location.origin === 'null' ? 'http://localhost:8000' : window.location.origin;
+        const response = await fetch(`${apiBase}/api/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

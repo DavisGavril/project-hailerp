@@ -49,8 +49,9 @@
 
   async function loadUserProfile() {
     try {
+      const apiBase = window.location.origin.startsWith('file://') || window.location.origin === 'null' ? 'http://localhost:8000' : window.location.origin;
       const params = new URLSearchParams({ email: emailParam, role: roleParam });
-      const response = await fetch(`http://localhost:8000/api/profile?${params.toString()}`);
+      const response = await fetch(`${apiBase}/api/profile?${params.toString()}`);
       const user = await response.json();
 
       if (user && !user.error) {
