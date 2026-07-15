@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Announcement Board Manager</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .notice-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .nb-academic { background: rgba(0, 56, 116, 0.1); color: var(--navy); }
+  .nb-exams { background: rgba(190, 24, 93, 0.1); color: #BE185D; }
+  .nb-fees { background: rgba(0, 106, 97, 0.1); color: var(--teal); }
+  .nb-general { background: rgba(74, 85, 104, 0.1); color: #4A5568; }
+
+  .notice-editor {
+    position: sticky;
+    top: 90px;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="admin-users.html" class="nav-item">
+        <i class="fa-solid fa-users"></i><span>User Management</span>
+      </a>
+      <a href="admin-courses.html" class="nav-item">
+        <i class="fa-solid fa-graduation-cap"></i><span>Courses & Academics</span>
+      </a>
+      <a href="admin-finance.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Finance & Fees</span>
+      </a>
+      <a href="admin-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="admin-library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library Catalog</span>
+      </a>
+      <a href="admin-notices.html" class="nav-item active">
+        <i class="fa-solid fa-bullhorn"></i><span>Notice Board</span>
+      </a>
+      <a href="admin-health.html" class="nav-item">
+        <i class="fa-solid fa-server"></i><span>System Health</span>
+      </a>
+      <a href="admin-tickets.html" class="nav-item">
+        <i class="fa-solid fa-ticket"></i><span>Support Tickets</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Notice Board Broadcast Control</h1>
+        <span>Draft and broadcast global notifications to all student & faculty portals</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="admin-tickets.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">AD</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">AD</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Admin Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">admin@institution.edu</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,56,116,0.1); color:var(--navy);">
+            <i class="fa-solid fa-bullhorn"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Active Announcements</span>
+            <span class="stat-value" id="statsTotalNotices">0</span>
+            <span class="stat-trend ok">Broadcasting live</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Academic Notices</span>
+            <span class="stat-value" id="statsAcademic">0</span>
+            <span class="stat-trend">Syllabus & Curriculum</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(190,24,93,0.1); color:#BE185D;">
+            <i class="fa-solid fa-receipt"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Financial Notices</span>
+            <span class="stat-value" id="statsFees">0</span>
+            <span class="stat-trend">Dues & payment links</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(217,119,6,0.1); color:#D97706;">
+            <i class="fa-solid fa-file-signature"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Exam Notices</span>
+            <span class="stat-value" id="statsExams">0</span>
+            <span class="stat-trend text-warning">Assessments & Schedules</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="two-col">
+        <!-- Notice Composer Form -->
+        <section class="panel notice-editor">
+          <div class="panel-header">
+            <h3>Publish New Notice</h3>
+          </div>
+          <form id="noticeForm">
+            <div class="form-group-custom">
+              <label for="noticeTitle">Notice Title</label>
+              <input type="text" class="form-control-custom2" id="noticeTitle" placeholder="e.g. Scheduled Power Outage / Academic Holiday" required>
+            </div>
+            
+            <div class="form-group-custom">
+              <label for="noticeCategory">Category</label>
+              <select class="form-control-custom2" id="noticeCategory" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="academic">Academic</option>
+                <option value="exams">Exams & Tests</option>
+                <option value="fees">Fees & Accounts</option>
+                <option value="general">General Advisory</option>
+              </select>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="noticeSummary">Brief Summary</label>
+              <input type="text" class="form-control-custom2" id="noticeSummary" placeholder="Short single sentence overview of notice..." required>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="noticeBody">Notice Content (Detailed)</label>
+              <textarea class="form-control-custom2" id="noticeBody" rows="5" placeholder="Dear Students & Staff, ..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-navy w-100 justify-content-center mt-3" style="height:42px;">
+              <i class="fa-solid fa-paper-plane"></i> Broadcast Notice Board Announcement
+            </button>
+          </form>
+        </section>
+
+        <!-- Current Bulletins List -->
+        <div>
+          <section class="panel" style="min-height:450px;">
+            <div class="panel-header">
+              <h3>Live Announcement Catalog</h3>
+            </div>
+            <div style="display:flex; gap:12px; margin-bottom:20px;">
+              <input type="text" class="form-control-custom2" id="searchNotice" placeholder="Search notices by title, category...">
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Notice Details</th>
+                    <th>Category</th>
+                    <th>Date Published</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="noticesTableBody">
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Notice Preview Modal -->
+<div class="modal fade" id="noticePreviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:14px; border:none; box-shadow:0 10px 30px rgba(0,0,0,0.15);">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h5 class="modal-title" id="previewTitle" style="font-weight:600; color:var(--ink);"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:14px; font-size:12px; color:var(--muted2);">
+          <span id="previewCategory" class="notice-badge"></span>
+          <span id="previewDate"></span>
+        </div>
+        <p id="previewSummary" style="font-weight:500; font-size:13.5px; color:var(--ink); margin-bottom:16px; border-left:3px solid var(--navy); padding-left:10px;"></p>
+        <div id="previewBody" style="font-size:13px; color:var(--muted); line-height:1.6; white-space:pre-wrap;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+
+<script>
+  // Default Notices matches notices.html exactly to keep parity
+  const defaultNotices = [
+    {
+      id: 1,
+      title: "Semester fee payment deadline extended to 20 July",
+      category: "fees",
+      date: "08 Jul 2026",
+      summary: "The institution has extended the last date for Semester 5 academic fee payments without fine.",
+      body: "Dear Students,\n\nIn response to representations from the Student Council, the management has approved an extension of the deadline for paying Semester 5 outstanding fees.\n\n- Extended Deadline: 20 July 2026\n- Payment Modes: Online via ERP Gateway, Net Banking, or Demand Draft.\n\nLate submissions after 20 July will attract a penalty fine of ₹100 per day. Please complete your transaction at the earliest in the Fees section."
+    },
+    {
+      id: 2,
+      title: "Guest lecture on AI Ethics by Dr. Larry Page — 12 July",
+      category: "academic",
+      date: "07 Jul 2026",
+      summary: "Join us for an enlightening guest session on Artificial Intelligence ethics, responsibilities, and future developments.",
+      body: "Dear Students & Faculty,\n\nWe are pleased to invite you to the Guest Lecture Series hosted by the Department of Information Technology.\n\n- Speaker: Dr. Larry Page\n- Topic: AI Ethics, Alignment, and Institutional Responsibilities\n- Date: 12 July 2026\n- Time: 10:00 AM – 12:00 PM\n- Venue: Main Auditorium (Block A)\n\nAttendance is mandatory for all III & IV-year students. Refreshments will be served afterwards."
+    },
+    {
+      id: 3,
+      title: "Internal assessment marks for Semester 5 published",
+      category: "exams",
+      date: "06 Jul 2026",
+      summary: "First internal test marks for CS502 (Machine Learning) and CS501 (Cloud Computing) are uploaded.",
+      body: "Dear Students,\n\nThe grade sheets and scores for the first continuous internal assessment test of Semester 5 have been published. \n\nYou can view your subject-wise marks by visiting the Grades tab on the left sidebar. If you have any inquiries regarding the grading or notice any clerical mismatches, please contact your respective subject faculty before 12 July 2026."
+    },
+    {
+      id: 4,
+      title: "Library book return and renewal reminder",
+      category: "general",
+      date: "05 Jul 2026",
+      summary: "Return borrowed reference books and library assets to avoid daily overdue fines.",
+      body: "Attention Library Patrons,\n\nThis is a standard notice that all books borrowed during June 2026 are due for return or renewal. Please check the Library section of your dashboard for details.\n\n- Due Date: 10 July 2026\n- Overdue Fine: ₹10 per day per book\n\nYou can renew your books online once via the ERP dashboard, provided they are not in the reservation queue."
+    },
+    {
+      id: 5,
+      title: "Odd Semester registration starting for elective choices",
+      category: "academic",
+      date: "04 Jul 2026",
+      summary: "Select your elective papers for the upcoming Semester 6 course path. Credit selection limits apply.",
+      body: "Dear Students,\n\nThe portal for elective registration for next semester (Semester 6) will open on 15 July 2026.\n\nSelect your electives from the options available under 'Course Registration'. You are allowed to register for a maximum of 2 electives (6 credits total). Registration is on a first-come, first-served basis, subject to a department seat limit of 60 students per elective."
+    }
+  ];
+
+  if (!localStorage.getItem('edupulse_notices')) {
+    localStorage.setItem('edupulse_notices', JSON.stringify(defaultNotices));
+  }
+
+  function getNotices() {
+    return JSON.parse(localStorage.getItem('edupulse_notices') || '[]');
+  }
+
+  function saveNotices(notices) {
+    localStorage.setItem('edupulse_notices', JSON.stringify(notices));
+  }
+
+  const tableBody = document.getElementById('noticesTableBody');
+  const searchInput = document.getElementById('searchNotice');
+  const noticeForm = document.getElementById('noticeForm');
+  let searchQuery = '';
+
+  function renderNotices() {
+    tableBody.innerHTML = '';
+    const notices = getNotices();
+
+    const filtered = notices.filter(n => {
+      return n.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+             n.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             n.summary.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    filtered.forEach(n => {
+      const tr = document.createElement('tr');
+      tr.style.cursor = 'pointer';
+      tr.onclick = (e) => {
+        if (e.target.closest('button')) return; // ignore actions click
+        openPreview(n);
+      };
+      
+      tr.innerHTML = `
+        <td><strong>${n.title}</strong><br><span style="font-size:11.5px; color:var(--muted2);">${n.summary}</span></td>
+        <td><span class="notice-badge nb-${n.category}">${n.category}</span></td>
+        <td>${n.date}</td>
+        <td>
+          <button class="btn-sm-bad" onclick="deleteNotice(${n.id})">Delete</button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    if (filtered.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:32px; color:var(--muted2);">No active notices. Write one on the left to start!</td></tr>';
+    }
+
+    // Update stats cards
+    document.getElementById('statsTotalNotices').textContent = notices.length;
+    document.getElementById('statsAcademic').textContent = notices.filter(n => n.category === 'academic').length;
+    document.getElementById('statsFees').textContent = notices.filter(n => n.category === 'fees').length;
+    document.getElementById('statsExams').textContent = notices.filter(n => n.category === 'exams').length;
+  }
+
+  window.deleteNotice = function(id) {
+    if (confirm("Are you sure you want to retract and delete this announcement? This action removes it from student & faculty dashboards.")) {
+      let notices = getNotices();
+      notices = notices.filter(n => n.id !== id);
+      saveNotices(notices);
+      renderNotices();
+    }
+  };
+
+  const previewModal = new bootstrap.Modal(document.getElementById('noticePreviewModal'));
+  function openPreview(n) {
+    document.getElementById('previewTitle').textContent = n.title;
+    const catEl = document.getElementById('previewCategory');
+    catEl.className = `notice-badge nb-${n.category}`;
+    catEl.textContent = n.category;
+    document.getElementById('previewDate').textContent = n.date;
+    document.getElementById('previewSummary').textContent = n.summary;
+    document.getElementById('previewBody').textContent = n.body;
+    previewModal.show();
+  }
+
+  if (noticeForm) {
+    noticeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('noticeTitle').value;
+      const category = document.getElementById('noticeCategory').value;
+      const summary = document.getElementById('noticeSummary').value;
+      const body = document.getElementById('noticeBody').value;
+
+      const notices = getNotices();
+      const options = { day: '2-digit', month: 'short', year: 'numeric' };
+      const todayFormatted = new Date().toLocaleDateString('en-GB', options).replace(/,/g, '');
+
+      const newNotice = {
+        id: Date.now(),
+        title: title,
+        category: category,
+        date: todayFormatted,
+        summary: summary,
+        body: body
+      };
+
+      notices.unshift(newNotice); // add to top of feed
+      saveNotices(notices);
+      renderNotices();
+      noticeForm.reset();
+
+      alert(`Notice "${title}" broadcast successfully!`);
+    });
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderNotices();
+  });
+
+  renderNotices();
+</script>
+
+
+
+</body>
+</html>

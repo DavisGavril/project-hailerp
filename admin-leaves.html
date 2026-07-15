@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Leave Approval Center</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .badge-approved { background: rgba(0, 106, 97, 0.1); color: var(--teal); }
+  .badge-rejected { background: rgba(190, 24, 93, 0.1); color: #BE185D; }
+  .badge-pending { background: rgba(217, 119, 6, 0.1); color: #D97706; }
+  .badge-pill-custom {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .filter-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="admin-users.html" class="nav-item">
+        <i class="fa-solid fa-users"></i><span>User Management</span>
+      </a>
+      <a href="admin-courses.html" class="nav-item">
+        <i class="fa-solid fa-graduation-cap"></i><span>Courses & Academics</span>
+      </a>
+      <a href="admin-finance.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Finance & Fees</span>
+      </a>
+      <a href="admin-leaves.html" class="nav-item active">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="admin-library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library Catalog</span>
+      </a>
+      <a href="admin-notices.html" class="nav-item">
+        <i class="fa-solid fa-bullhorn"></i><span>Notice Board</span>
+      </a>
+      <a href="admin-health.html" class="nav-item">
+        <i class="fa-solid fa-server"></i><span>System Health</span>
+      </a>
+      <a href="admin-tickets.html" class="nav-item">
+        <i class="fa-solid fa-ticket"></i><span>Support Tickets</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Absence & Leave Approvals</h1>
+        <span>Manage leave queries, duty-leaves, and sick requests from students & professors</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="admin-tickets.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">AD</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">AD</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Admin Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">admin@institution.edu</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(217,119,6,0.1); color:#D97706;">
+            <i class="fa-solid fa-hourglass-half"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Awaiting Review</span>
+            <span class="stat-value" id="statsPending">0</span>
+            <span class="stat-trend text-warning"><i class="fa-solid fa-clock"></i> Action required</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,56,116,0.1); color:var(--navy);">
+            <i class="fa-solid fa-user-graduate"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Student Requests</span>
+            <span class="stat-value" id="statsStudent">0</span>
+            <span class="stat-trend">Portal submissions</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-chalkboard-user"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Faculty Requests</span>
+            <span class="stat-value" id="statsFaculty">0</span>
+            <span class="stat-trend">Registrar notifications</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label font-weight-bold">Processed Approved</span>
+            <span class="stat-value" id="statsApproved">0</span>
+            <span class="stat-trend text-success"><i class="fa-solid fa-check"></i> Attendance marked</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="filter-wrap">
+          <div style="display:flex; gap:12px; flex:1; max-width:600px;">
+            <input type="text" class="form-control-custom2" id="searchLeave" placeholder="Search by name, ID, or reason...">
+            <select class="form-control-custom2" id="filterRole" style="max-width:150px;">
+              <option value="all">All Roles</option>
+              <option value="student">Students Only</option>
+              <option value="faculty">Faculty Only</option>
+            </select>
+            <select class="form-control-custom2" id="filterStatus" style="max-width:150px;">
+              <option value="all">All Statuses</option>
+              <option value="Pending">Pending Only</option>
+              <option value="Approved">Approved Only</option>
+              <option value="Rejected">Rejected Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Applicant Details</th>
+                <th>Institutional ID</th>
+                <th>Leave Type</th>
+                <th>Duration</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leavesTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+
+<script>
+  // Default leaves database
+  const defaultLeaves = [
+    {
+      id: "leave_1",
+      email: "davis.gavril@institution.edu",
+      name: "Davis Gavril",
+      regNo: "731122205012",
+      type: "Medical Leave",
+      dates: "01 – 03 Jul 2026",
+      days: 3,
+      reason: "Severely down with viral fever. Medical certificate uploaded.",
+      status: "Approved",
+      dateSubmitted: "2026-07-01"
+    },
+    {
+      id: "leave_2",
+      email: "prof.menon@institution.edu",
+      name: "Dr. R. Menon",
+      regNo: "EMP-2024-704",
+      type: "Casual Leave",
+      dates: "09 Jul 2026",
+      days: 1,
+      reason: "Urgent personal work in native town, class adjustment coordinated with Prof Iyer.",
+      status: "Pending",
+      dateSubmitted: "2026-07-07"
+    },
+    {
+      id: "leave_5",
+      email: "meena.l@institution.edu",
+      name: "Meena Latha K",
+      regNo: "731122205024",
+      type: "Academic Permission",
+      dates: "16 – 17 Jul 2026",
+      days: 2,
+      reason: "Selected for inter-college hackathon, permission letter attached.",
+      status: "Pending",
+      dateSubmitted: "2026-07-08"
+    }
+  ];
+
+  if (!localStorage.getItem('edupulse_leaves')) {
+    localStorage.setItem('edupulse_leaves', JSON.stringify(defaultLeaves));
+  }
+
+  function getLeaves() {
+    return JSON.parse(localStorage.getItem('edupulse_leaves') || '[]');
+  }
+
+  function saveLeaves(leaves) {
+    localStorage.setItem('edupulse_leaves', JSON.stringify(leaves));
+  }
+
+  const tableBody = document.getElementById('leavesTableBody');
+  const searchInput = document.getElementById('searchLeave');
+  const filterRole = document.getElementById('filterRole');
+  const filterStatus = document.getElementById('filterStatus');
+
+  let searchQuery = '';
+  let selectedRole = 'all';
+  let selectedStatus = 'all';
+
+  function renderLeaves() {
+    tableBody.innerHTML = '';
+    const leaves = getLeaves();
+
+    const filtered = leaves.filter(l => {
+      const isStudent = l.regNo.startsWith('7311');
+      const roleMatches = selectedRole === 'all' || 
+                          (selectedRole === 'student' && isStudent) || 
+                          (selectedRole === 'faculty' && !isStudent);
+      const statusMatches = selectedStatus === 'all' || l.status === selectedStatus;
+      const searchMatches = l.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            l.regNo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            l.reason.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            l.type.toLowerCase().includes(searchQuery.toLowerCase());
+      return roleMatches && statusMatches && searchMatches;
+    });
+
+    filtered.forEach(l => {
+      const tr = document.createElement('tr');
+      const badgeClass = l.status === 'Approved' ? 'badge-approved' : (l.status === 'Rejected' ? 'badge-rejected' : 'badge-pending');
+      const isStudent = l.regNo.startsWith('7311');
+      const roleBadge = isStudent 
+        ? `<br><span style="font-size:10px; font-weight:600; color:var(--navy-light);">STUDENT</span>` 
+        : `<br><span style="font-size:10px; font-weight:600; color:var(--teal);">FACULTY</span>`;
+
+      let actionHtml = '';
+      if (l.status === 'Pending') {
+        actionHtml = `
+          <button class="btn-sm-good" onclick="processLeave('${l.id}', 'Approved')">Approve</button>
+          <button class="btn-sm-bad ms-1" onclick="processLeave('${l.id}', 'Rejected')">Reject</button>
+        `;
+      } else {
+        actionHtml = `<span style="font-size:12px; color:var(--muted2); font-weight:500;">Reviewed</span>`;
+      }
+
+      tr.innerHTML = `
+        <td><strong>${l.name}</strong>${roleBadge}<br><span style="font-size:11px; color:var(--muted2);">${l.email}</span></td>
+        <td>${l.regNo}</td>
+        <td><strong>${l.type}</strong></td>
+        <td>${l.dates}<br><span style="font-size:11px; color:var(--muted2); font-weight:500;">(${l.days} ${l.days === 1 ? 'day' : 'days'})</span></td>
+        <td style="max-width:240px; font-size:12.5px; line-height:1.4;" title="${l.reason}">${l.reason}</td>
+        <td><span class="badge-pill-custom ${badgeClass}">${l.status}</span></td>
+        <td>${actionHtml}</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    if (filtered.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--muted2);">No leave requests matching criteria.</td></tr>';
+    }
+
+    // Update stats cards
+    document.getElementById('statsPending').textContent = leaves.filter(l => l.status === 'Pending').length;
+    document.getElementById('statsStudent').textContent = leaves.filter(l => l.regNo.startsWith('7311')).length;
+    document.getElementById('statsFaculty').textContent = leaves.filter(l => !l.regNo.startsWith('7311')).length;
+    document.getElementById('statsApproved').textContent = leaves.filter(l => l.status === 'Approved').length;
+  }
+
+  window.processLeave = function(id, status) {
+    const leaves = getLeaves();
+    const req = leaves.find(l => l.id === id);
+    if (req) {
+      req.status = status;
+      saveLeaves(leaves);
+      renderLeaves();
+      alert(`Leave request for ${req.name} has been ${status.toLowerCase()}!`);
+    }
+  };
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderLeaves();
+  });
+
+  filterRole.addEventListener('change', (e) => {
+    selectedRole = e.target.value;
+    renderLeaves();
+  });
+
+  filterStatus.addEventListener('change', (e) => {
+    selectedStatus = e.target.value;
+    renderLeaves();
+  });
+
+  renderLeaves();
+</script>
+
+
+
+</body>
+</html>

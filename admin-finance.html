@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Fees & Finance Control</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .badge-paid { background: rgba(0, 106, 97, 0.1); color: var(--teal); }
+  .badge-failed { background: rgba(190, 24, 93, 0.1); color: #BE185D; }
+  .badge-pending { background: rgba(217, 119, 6, 0.1); color: #D97706; }
+  .badge-pill-custom {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .filter-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="admin-users.html" class="nav-item">
+        <i class="fa-solid fa-users"></i><span>User Management</span>
+      </a>
+      <a href="admin-courses.html" class="nav-item">
+        <i class="fa-solid fa-graduation-cap"></i><span>Courses & Academics</span>
+      </a>
+      <a href="admin-finance.html" class="nav-item active">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Finance & Fees</span>
+      </a>
+      <a href="admin-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="admin-library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library Catalog</span>
+      </a>
+      <a href="admin-notices.html" class="nav-item">
+        <i class="fa-solid fa-bullhorn"></i><span>Notice Board</span>
+      </a>
+      <a href="admin-health.html" class="nav-item">
+        <i class="fa-solid fa-server"></i><span>System Health</span>
+      </a>
+      <a href="admin-tickets.html" class="nav-item">
+        <i class="fa-solid fa-ticket"></i><span>Support Tickets</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Institutional Fees & Finances</h1>
+        <span>Govern semester fee plans, audit transactions, and verify student outstanding dues</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="admin-tickets.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">AD</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">AD</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Admin Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">admin@institution.edu</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Total Fee Collected</span>
+            <span class="stat-value" id="statsTotalCollected">₹4,285,000</span>
+            <span class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> +₹125k this week</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(190,24,93,0.1); color:#BE185D;">
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Outstanding Dues</span>
+            <span class="stat-value" id="statsOutstanding">₹645,000</span>
+            <span class="stat-trend warn">Pending collection</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,56,116,0.1); color:var(--navy);">
+            <i class="fa-solid fa-receipt"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Total Transactions</span>
+            <span class="stat-value" id="statsTotalTxns">0</span>
+            <span class="stat-trend ok">UPI + Card + Cash</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Payment Success</span>
+            <span class="stat-value">99.84%</span>
+            <span class="stat-trend text-success">Gateway status nominal</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="two-col">
+        <!-- Live Payments Audit Logs -->
+        <section class="panel" style="min-height:480px;">
+          <div class="panel-header">
+            <h3>Student Fee Transactions</h3>
+          </div>
+          <div class="filter-wrap">
+            <input type="text" class="form-control-custom2" id="searchTxn" placeholder="Search student name or ID..." style="max-width:300px;">
+            <select class="form-control-custom2" id="filterStatus" style="max-width:140px;">
+              <option value="all">All Status</option>
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending</option>
+              <option value="Failed">Failed</option>
+            </select>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student Details</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date & Mode</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="txnsTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Fee Structure Setup -->
+        <div>
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Active Fee Structures (Per Sem)</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Fee Category</th>
+                    <th>Standard Amount</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="feesTableBody">
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Quick Actions</h3>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <button class="btn-navy w-100 justify-content-center" onclick="alert('Consolidated report generated!\n\nAll student payment logs exported to downloads folder.')">
+                <i class="fa-solid fa-file-pdf"></i> Export Financial Ledger Report
+              </button>
+              <button class="btn-navy w-100 justify-content-center" style="background:var(--teal);" onclick="alert('Notification triggers fired!\n\nAutomated pending fees reminder sent to 12 overdue student emails.')">
+                <i class="fa-solid fa-paper-plane"></i> Send Overdue Reminders
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Edit Fee Template Modal -->
+<div class="modal fade" id="editFeeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content" style="border-radius:14px; border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h5 class="modal-title" style="font-size:15px; font-weight:600;" id="editFeeLabel">Edit Fee Plan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:20px;">
+        <form id="editFeeForm">
+          <input type="hidden" id="feeId">
+          <div class="form-group-custom">
+            <label for="feeValue">Amount (₹)</label>
+            <input type="number" class="form-control-custom2" id="feeValue" required>
+          </div>
+          <button type="submit" class="btn-navy w-100 justify-content-center mt-3">
+            Update Fee
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+
+<script>
+  // Local storage financial structures
+  const defaultTxns = [
+    { id: "TXN101", studentName: "Davis Gavril", regNo: "731122205012", amount: 65000, status: "Paid", date: "01 Jul 2026", mode: "UPI" },
+    { id: "TXN102", studentName: "Karthik S", regNo: "731122205019", amount: 65000, status: "Paid", date: "02 Jul 2026", mode: "Card" },
+    { id: "TXN103", studentName: "Nithish B", regNo: "731122205027", amount: 65000, status: "Pending", date: "-", mode: "-" },
+    { id: "TXN104", studentName: "Meena Latha K", regNo: "731122205024", amount: 65000, status: "Paid", date: "03 Jul 2026", mode: "Net Banking" }
+  ];
+
+  const defaultFeePlans = [
+    { key: "tuition", label: "Tuition Fees", val: 65000 },
+    { key: "exams", label: "Examination Charges", val: 2500 },
+    { key: "labs", label: "Laboratory Consumables", val: 4000 },
+    { key: "library", label: "Library Association Plan", val: 1500 }
+  ];
+
+  if (!localStorage.getItem('edupulse_finance')) {
+    localStorage.setItem('edupulse_finance', JSON.stringify(defaultTxns));
+  }
+  if (!localStorage.getItem('edupulse_feeplans')) {
+    localStorage.setItem('edupulse_feeplans', JSON.stringify(defaultFeePlans));
+  }
+
+  function getTxns() {
+    return JSON.parse(localStorage.getItem('edupulse_finance') || '[]');
+  }
+  function saveTxns(txns) {
+    localStorage.setItem('edupulse_finance', JSON.stringify(txns));
+  }
+  function getFeePlans() {
+    return JSON.parse(localStorage.getItem('edupulse_feeplans') || '[]');
+  }
+  function saveFeePlans(plans) {
+    localStorage.setItem('edupulse_feeplans', JSON.stringify(plans));
+  }
+
+  const txnsTableBody = document.getElementById('txnsTableBody');
+  const feesTableBody = document.getElementById('feesTableBody');
+  const searchInput = document.getElementById('searchTxn');
+  const statusSelect = document.getElementById('filterStatus');
+
+  let searchQuery = '';
+  let selectedStatus = 'all';
+
+  function renderFinance() {
+    txnsTableBody.innerHTML = '';
+    const txns = getTxns();
+
+    const filtered = txns.filter(t => {
+      const matchesSearch = t.studentName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            t.regNo.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = selectedStatus === 'all' || t.status === selectedStatus;
+      return matchesSearch && matchesStatus;
+    });
+
+    filtered.forEach(t => {
+      const tr = document.createElement('tr');
+      const pillClass = t.status === 'Paid' ? 'badge-paid' : (t.status === 'Failed' ? 'badge-failed' : 'badge-pending');
+      
+      let actions = '';
+      if (t.status === 'Pending') {
+        actions = `<button class="btn-sm-good" onclick="overridePayment('${t.id}')">Verify Cash</button>`;
+      } else {
+        actions = `<span style="font-size:11.5px; color:var(--muted2); font-weight:600;">Audited</span>`;
+      }
+
+      tr.innerHTML = `
+        <td><strong>${t.studentName}</strong><br><span style="font-size:11px; color:var(--muted2);">${t.regNo}</span></td>
+        <td><strong>₹${t.amount.toLocaleString()}</strong></td>
+        <td><span class="badge-pill-custom ${pillClass}">${t.status}</span></td>
+        <td>${t.date}<br><span style="font-size:10.5px; color:var(--muted2); font-weight:600;">${t.mode}</span></td>
+        <td>${actions}</td>
+      `;
+      txnsTableBody.appendChild(tr);
+    });
+
+    if (filtered.length === 0) {
+      txnsTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--muted2);">No transactions found.</td></tr>';
+    }
+
+    // Render fees templates
+    feesTableBody.innerHTML = '';
+    const plans = getFeePlans();
+    plans.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${p.label}</td>
+        <td><strong>₹${p.val.toLocaleString()}</strong></td>
+        <td><button class="btn-sm-good" onclick="openEditFeeModal('${p.key}', ${p.val})">Edit</button></td>
+      `;
+      feesTableBody.appendChild(tr);
+    });
+
+    // Update statistics
+    const totalCollected = txns.filter(t => t.status === 'Paid').reduce((sum, t) => sum + t.amount, 0);
+    const totalOutstanding = txns.filter(t => t.status === 'Pending').reduce((sum, t) => sum + t.amount, 0);
+    
+    document.getElementById('statsTotalCollected').textContent = '₹' + (totalCollected + 3500000).toLocaleString(); // Add a starting base collection
+    document.getElementById('statsOutstanding').textContent = '₹' + totalOutstanding.toLocaleString();
+    document.getElementById('statsTotalTxns').textContent = txns.length;
+  }
+
+  window.overridePayment = function(id) {
+    if (confirm(`Mark transaction ${id} as PAID? (Overrides payment gateway pending state)`)) {
+      const txns = getTxns();
+      const txn = txns.find(t => t.id === id);
+      if (txn) {
+        txn.status = 'Paid';
+        txn.date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, '');
+        txn.mode = 'Cash/Offline';
+        saveTxns(txns);
+        renderFinance();
+        alert(`Payment verified! Outstanding dues updated.`);
+      }
+    }
+  };
+
+  const feeModal = new bootstrap.Modal(document.getElementById('editFeeModal'));
+  window.openEditFeeModal = function(key, val) {
+    document.getElementById('feeId').value = key;
+    document.getElementById('feeValue').value = val;
+    
+    const label = key === 'tuition' ? 'Tuition Fee' : (key === 'exams' ? 'Exams Fee' : (key === 'labs' ? 'Labs Fee' : 'Library Fee'));
+    document.getElementById('editFeeLabel').textContent = 'Modify ' + label;
+    feeModal.show();
+  };
+
+  document.getElementById('editFeeForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const key = document.getElementById('feeId').value;
+    const newVal = parseInt(document.getElementById('feeValue').value);
+
+    const plans = getFeePlans();
+    const plan = plans.find(p => p.key === key);
+    if (plan) {
+      plan.val = newVal;
+      saveFeePlans(plans);
+      renderFinance();
+      feeModal.hide();
+      alert("Fee template adjusted successfully!");
+    }
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderFinance();
+  });
+
+  statusSelect.addEventListener('change', (e) => {
+    selectedStatus = e.target.value;
+    renderFinance();
+  });
+
+  renderFinance();
+</script>
+
+
+
+</body>
+</html>

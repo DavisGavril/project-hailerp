@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Library Catalog Control</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .badge-active { background: rgba(0, 106, 97, 0.1); color: var(--teal); }
+  .badge-overdue { background: rgba(190, 24, 93, 0.1); color: #BE185D; }
+  .badge-returned { background: rgba(74, 85, 104, 0.1); color: #4A5568; }
+  .badge-pill-custom {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .filter-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="admin-users.html" class="nav-item">
+        <i class="fa-solid fa-users"></i><span>User Management</span>
+      </a>
+      <a href="admin-courses.html" class="nav-item">
+        <i class="fa-solid fa-graduation-cap"></i><span>Courses & Academics</span>
+      </a>
+      <a href="admin-finance.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Finance & Fees</span>
+      </a>
+      <a href="admin-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="admin-library.html" class="nav-item active">
+        <i class="fa-solid fa-book"></i><span>Library Catalog</span>
+      </a>
+      <a href="admin-notices.html" class="nav-item">
+        <i class="fa-solid fa-bullhorn"></i><span>Notice Board</span>
+      </a>
+      <a href="admin-health.html" class="nav-item">
+        <i class="fa-solid fa-server"></i><span>System Health</span>
+      </a>
+      <a href="admin-tickets.html" class="nav-item">
+        <i class="fa-solid fa-ticket"></i><span>Support Tickets</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Library Catalog & Checkouts</h1>
+        <span>Govern institutional book inventory, track checkouts, and manage overdue student fines</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="admin-tickets.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">AD</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">AD</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Admin Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">admin@institution.edu</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,56,116,0.1); color:var(--navy);">
+            <i class="fa-solid fa-book"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Catalog Size</span>
+            <span class="stat-value" id="statsTotalBooks">1,424</span>
+            <span class="stat-trend ok">Physical + digital assets</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-user-tag"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Active Checkouts</span>
+            <span class="stat-value" id="statsActiveCheckouts">3</span>
+            <span class="stat-trend">Currently issued</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(190,24,93,0.1); color:#BE185D;">
+            <i class="fa-solid fa-calendar-times"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Overdue Items</span>
+            <span class="stat-value" id="statsOverdue">1</span>
+            <span class="stat-trend warn">Notice warnings sent</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(217,119,6,0.1); color:#D97706;">
+            <i class="fa-solid fa-coins"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label font-weight-bold">Fines Accrued</span>
+            <span class="stat-value" id="statsFines">₹20</span>
+            <span class="stat-trend text-danger">Pending collection</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="two-col">
+        <!-- Checked Out Books Table -->
+        <section class="panel" style="min-height:480px;">
+          <div class="panel-header">
+            <h3>Active Book Checkouts</h3>
+          </div>
+          <div class="filter-wrap">
+            <input type="text" class="form-control-custom2" id="searchCheckout" placeholder="Search by student name or book..." style="max-width:300px;">
+            <button class="btn-navy" data-bs-toggle="modal" data-bs-target="#issueBookModal">
+              <i class="fa-solid fa-plus"></i> Issue New Book
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student Info</th>
+                  <th>Book Details</th>
+                  <th>Due Date</th>
+                  <th>Fine</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="checkoutsTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Catalog List -->
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Catalog Registry</h3>
+            <button class="btn-navy" style="background:var(--teal); font-size:12px; padding:6px 12px;" data-bs-toggle="modal" data-bs-target="#addBookModal">
+              <i class="fa-solid fa-circle-plus"></i> Register Book
+            </button>
+          </div>
+          <div style="margin-bottom:16px;">
+            <input type="text" class="form-control-custom2" id="searchCatalog" placeholder="Search catalog items...">
+          </div>
+          <div class="table-responsive" style="max-height:380px; overflow-y:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Book ID</th>
+                  <th>Title & Author</th>
+                </tr>
+              </thead>
+              <tbody id="catalogTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Issue Book Modal -->
+<div class="modal fade" id="issueBookModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:14px; border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h5 class="modal-title" style="font-size:16px; font-weight:600;">Issue Catalog Book</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <form id="issueForm">
+          <div class="form-group-custom">
+            <label for="issueStudentEmail">Student Institutional Email</label>
+            <input type="email" class="form-control-custom2" id="issueStudentEmail" placeholder="e.g. student@institution.edu" required>
+          </div>
+          <div class="form-group-custom">
+            <label for="issueBookTitle">Book Title</label>
+            <select class="form-control-custom2" id="issueBookTitle" required>
+              <option value="" disabled selected>Select book from catalog</option>
+              <!-- Populate from books registry -->
+            </select>
+          </div>
+          <div class="form-group-custom">
+            <label for="issueDueDate">Due Date</label>
+            <input type="date" class="form-control-custom2" id="issueDueDate" required>
+          </div>
+          <button type="submit" class="btn-navy w-100 justify-content-center mt-3" style="height:42px;">
+            <i class="fa-solid fa-ticket"></i> Complete Checkout Process
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Book Modal -->
+<div class="modal fade" id="addBookModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:14px; border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h5 class="modal-title" style="font-size:16px; font-weight:600;">Register Book in Catalog</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <form id="addBookForm">
+          <div class="form-group-custom">
+            <label for="newBookTitle">Title</label>
+            <input type="text" class="form-control-custom2" id="newBookTitle" placeholder="e.g. Introduction to Neural Networks" required>
+          </div>
+          <div class="form-group-custom">
+            <label for="newBookAuthor">Author</label>
+            <input type="text" class="form-control-custom2" id="newBookAuthor" placeholder="e.g. Geoffrey Hinton" required>
+          </div>
+          <button type="submit" class="btn-navy w-100 justify-content-center mt-3" style="height:42px;">
+            <i class="fa-solid fa-circle-plus"></i> Save to Registry
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+
+<script>
+  // Default database
+  const defaultBooks = [
+    { code: "BK-1002", title: "Introduction to Algorithms", author: "Thomas H. Cormen" },
+    { code: "BK-1008", title: "Cloud Computing Architecture", author: "John W. Rittinghouse" },
+    { code: "BK-1024", title: "Machine Learning: A Probabilistic Perspective", author: "Kevin P. Murphy" },
+    { code: "BK-1055", title: "Clean Code: A Handbook of Agile Software Craftsmanship", author: "Robert C. Martin" }
+  ];
+
+  const defaultCheckouts = [
+    { id: "ISS-98", email: "davis.gavril@institution.edu", name: "Davis Gavril", regNo: "731122205012", title: "Introduction to Algorithms", code: "BK-1002", date: "15 Jun 2026", due: "15 Jul 2026", fine: 0, status: "Active" },
+    { id: "ISS-99", email: "davis.gavril@institution.edu", name: "Davis Gavril", regNo: "731122205012", title: "Cloud Computing Architecture", code: "BK-1008", date: "22 Jun 2026", due: "06 Jul 2026", fine: 20, status: "Overdue" },
+    { id: "ISS-100", email: "davis.gavril@institution.edu", name: "Davis Gavril", regNo: "731122205012", title: "Machine Learning: A Probabilistic Perspective", code: "BK-1024", date: "28 Jun 2026", due: "28 Jul 2026", fine: 0, status: "Active" }
+  ];
+
+  if (!localStorage.getItem('edupulse_library_books')) {
+    localStorage.setItem('edupulse_library_books', JSON.stringify(defaultBooks));
+  }
+  if (!localStorage.getItem('edupulse_library_issuances')) {
+    localStorage.setItem('edupulse_library_issuances', JSON.stringify(defaultCheckouts));
+  }
+
+  function getBooks() {
+    return JSON.parse(localStorage.getItem('edupulse_library_books') || '[]');
+  }
+  function saveBooks(books) {
+    localStorage.setItem('edupulse_library_books', JSON.stringify(books));
+  }
+  function getCheckouts() {
+    return JSON.parse(localStorage.getItem('edupulse_library_issuances') || '[]');
+  }
+  function saveCheckouts(chk) {
+    localStorage.setItem('edupulse_library_issuances', JSON.stringify(chk));
+  }
+
+  const checkoutsTable = document.getElementById('checkoutsTableBody');
+  const catalogTable = document.getElementById('catalogTableBody');
+  const checkoutSearch = document.getElementById('searchCheckout');
+  const catalogSearch = document.getElementById('searchCatalog');
+  const bookSelect = document.getElementById('issueBookTitle');
+
+  let checkSearchVal = '';
+  let catSearchVal = '';
+
+  function renderLibrary() {
+    // 1. Render active checkouts
+    checkoutsTable.innerHTML = '';
+    const checkouts = getCheckouts();
+    
+    const filteredCheckouts = checkouts.filter(c => {
+      return c.name.toLowerCase().includes(checkSearchVal.toLowerCase()) || 
+             c.title.toLowerCase().includes(checkSearchVal.toLowerCase()) ||
+             c.regNo.toLowerCase().includes(checkSearchVal.toLowerCase()) ||
+             c.status.toLowerCase().includes(checkSearchVal.toLowerCase());
+    });
+
+    filteredCheckouts.forEach(c => {
+      const tr = document.createElement('tr');
+      const badgeClass = c.status === 'Active' ? 'badge-active' : (c.status === 'Overdue' ? 'badge-overdue' : 'badge-returned');
+      
+      let actionHtml = '';
+      if (c.status !== 'Returned') {
+        actionHtml = `<button class="btn-sm-good" onclick="returnBook('${c.id}')">Return Book</button>`;
+        if (c.fine > 0) {
+          actionHtml += `<button class="btn-sm-bad ms-1" style="background:#fff; color:#BE185D; border:1px solid #BE185D;" onclick="waiveFine('${c.id}')">Waive Fine</button>`;
+        }
+      } else {
+        actionHtml = `<span style="font-size:12px; color:var(--muted2);">Processed</span>`;
+      }
+
+      tr.innerHTML = `
+        <td><strong>${c.name}</strong><br><span style="font-size:11px; color:var(--muted2);">${c.regNo}</span></td>
+        <td><strong>${c.title}</strong><br><span style="font-size:10.5px; color:var(--muted2); font-weight:600;">Code: ${c.code}</span></td>
+        <td>${c.due}</td>
+        <td><strong style="${c.fine > 0 ? 'color:#BE185D;' : ''}">₹${c.fine}</strong></td>
+        <td><span class="badge-pill-custom ${badgeClass}">${c.status}</span></td>
+        <td>${actionHtml}</td>
+      `;
+      checkoutsTable.appendChild(tr);
+    });
+
+    if (filteredCheckouts.length === 0) {
+      checkoutsTable.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--muted2);">No checkouts match query.</td></tr>';
+    }
+
+    // 2. Render catalog
+    catalogTable.innerHTML = '';
+    const books = getBooks();
+    const filteredBooks = books.filter(b => {
+      return b.title.toLowerCase().includes(catSearchVal.toLowerCase()) || 
+             b.author.toLowerCase().includes(catSearchVal.toLowerCase()) ||
+             b.code.toLowerCase().includes(catSearchVal.toLowerCase());
+    });
+
+    filteredBooks.forEach(b => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${b.code}</strong></td>
+        <td><strong>${b.title}</strong><br><span style="font-size:11.5px; color:var(--muted2);">${b.author}</span></td>
+      `;
+      catalogTable.appendChild(tr);
+    });
+
+    if (filteredBooks.length === 0) {
+      catalogTable.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:12px; color:var(--muted2);">Book not in catalog.</td></tr>';
+    }
+
+    // 3. Populate Modal Select Option
+    bookSelect.innerHTML = '<option value="" disabled selected>Select book from catalog</option>';
+    books.forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.title + '::' + b.code;
+      opt.textContent = `${b.title} (Code: ${b.code})`;
+      bookSelect.appendChild(opt);
+    });
+
+    // 4. Update metrics
+    document.getElementById('statsTotalBooks').textContent = books.length + 1420; // base scale
+    document.getElementById('statsActiveCheckouts').textContent = checkouts.filter(c => c.status === 'Active').length;
+    document.getElementById('statsOverdue').textContent = checkouts.filter(c => c.status === 'Overdue').length;
+    
+    const sumFines = checkouts.reduce((sum, c) => sum + c.fine, 0);
+    document.getElementById('statsFines').textContent = '₹' + sumFines;
+  }
+
+  window.returnBook = function(id) {
+    const checkouts = getCheckouts();
+    const c = checkouts.find(chk => chk.id === id);
+    if (c) {
+      c.status = 'Returned';
+      c.fine = 0;
+      saveCheckouts(checkouts);
+      renderLibrary();
+      alert(`Book "${c.title}" checked in successfully! Inventory restocked.`);
+    }
+  };
+
+  window.waiveFine = function(id) {
+    const checkouts = getCheckouts();
+    const c = checkouts.find(chk => chk.id === id);
+    if (c) {
+      c.fine = 0;
+      saveCheckouts(checkouts);
+      renderLibrary();
+      alert(`Fines waived for student ${c.name}.`);
+    }
+  };
+
+  // Issue Form Submission
+  const issueForm = document.getElementById('issueForm');
+  const issueModal = new bootstrap.Modal(document.getElementById('issueBookModal'));
+
+  if (issueForm) {
+    issueForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('issueStudentEmail').value;
+      const selectVal = document.getElementById('issueBookTitle').value.split('::');
+      const bTitle = selectVal[0];
+      const bCode = selectVal[1];
+      const dueVal = document.getElementById('issueDueDate').value;
+
+      const namePart = email.split('@')[0];
+      const sName = namePart.replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+      // Resolve a mock Reg No
+      let regNo = '731122205' + Math.floor(100 + Math.random() * 899);
+      if (email.toLowerCase() === 'davis.gavril@institution.edu') regNo = '731122205012';
+
+      const checkouts = getCheckouts();
+      const newIssue = {
+        id: 'ISS-' + (checkouts.length + 101),
+        email: email,
+        name: sName,
+        regNo: regNo,
+        title: bTitle,
+        code: bCode,
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, ''),
+        due: new Date(dueVal).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, ''),
+        fine: 0,
+        status: "Active"
+      };
+
+      checkouts.unshift(newIssue);
+      saveCheckouts(checkouts);
+      renderLibrary();
+      issueForm.reset();
+      issueModal.hide();
+
+      alert(`Checkout compiled! Book "${bTitle}" issued to ${sName}.`);
+    });
+  }
+
+  // Add Book Form Submission
+  const addForm = document.getElementById('addBookForm');
+  const addModal = new bootstrap.Modal(document.getElementById('addBookModal'));
+
+  if (addForm) {
+    addForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('newBookTitle').value;
+      const author = document.getElementById('newBookAuthor').value;
+
+      const books = getBooks();
+      const nextCode = 'BK-' + (books.length + 1056);
+
+      const newBook = {
+        code: nextCode,
+        title: title,
+        author: author
+      };
+
+      books.push(newBook);
+      saveBooks(books);
+      renderLibrary();
+      addForm.reset();
+      addModal.hide();
+
+      alert(`Book "${title}" added to catalog registry under ID ${nextCode}!`);
+    });
+  }
+
+  checkoutSearch.addEventListener('input', (e) => {
+    checkSearchVal = e.target.value;
+    renderLibrary();
+  });
+
+  catalogSearch.addEventListener('input', (e) => {
+    catSearchVal = e.target.value;
+    renderLibrary();
+  });
+
+  renderLibrary();
+</script>
+
+
+
+</body>
+</html>

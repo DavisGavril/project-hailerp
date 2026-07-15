@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Payment Receipts</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .receipt-modal-box {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    background: #fff;
+    margin-bottom: 12px;
+  }
+  .receipt-modal-header {
+    text-align: center;
+    border-bottom: 1.5px dashed var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+  .receipt-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .receipt-row.total {
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="student-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="my-courses.html" class="nav-item">
+        <i class="fa-solid fa-book-open"></i><span>My Courses</span>
+      </a>
+      <a href="attendance.html" class="nav-item">
+        <i class="fa-solid fa-clipboard-check"></i><span>Attendance</span>
+      </a>
+      <a href="grades.html" class="nav-item">
+        <i class="fa-solid fa-chart-line"></i><span>Grades</span>
+      </a>
+      <a href="timetable.html" class="nav-item">
+        <i class="fa-solid fa-calendar-days"></i><span>Timetable</span>
+      </a>
+      <a href="fees.html" class="nav-item active">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Fees</span>
+      </a>
+      <a href="library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library</span>
+      </a>
+      <a href="student-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Payment Receipts</h1>
+        <span>View and download academic transaction receipts</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="notices.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">ST</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Student</span>
+              <span class="profile-role">B.Tech IT · III Year</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">ST</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Student Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">student@institution.edu</span>
+                <span class="profile-dropdown-id" id="dropdownProfileId" style="font-size:10.5px; color:var(--muted2); font-weight:600; margin-top:2px;">ID: 731122205012</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="panel">
+        <div class="panel-header" style="margin-bottom:24px;">
+          <h3>Academic Transactions List</h3>
+          <a href="fees.html" class="panel-link"><i class="fa-solid fa-arrow-left"></i> Back to Fees</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Receipt No</th>
+                <th>Transaction Date</th>
+                <th>Fee Details</th>
+                <th>Amount Paid</th>
+                <th>Payment Mode</th>
+                <th>Receipt</th>
+              </tr>
+            </thead>
+            <tbody id="receiptsTableBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="modal fade" id="receiptModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:14px; border:none; box-shadow:0 12px 30px rgba(0,0,0,0.15);">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h5 class="modal-title" style="font-size:16px; font-weight:600; color:var(--ink);">Receipt View</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <div class="receipt-modal-box" id="printableReceipt">
+          <div class="receipt-modal-header">
+            <i class="fa-solid fa-graduation-cap" style="font-size:28px; color:var(--navy); margin-bottom:4px;"></i>
+            <h4 style="font-size:16px; font-weight:700; color:var(--navy); margin:0;">EduPulse ERP portal</h4>
+            <span style="font-size:10px; color:var(--muted2); font-weight:600; text-transform:uppercase;">Official Payment Receipt</span>
+          </div>
+
+          <div style="font-size:11px; color:var(--muted2); margin-bottom:12px; text-align:center;">
+            <strong>Transaction ID:</strong> <span id="rTxnId"></span>
+          </div>
+
+          <div class="receipt-row"><span class="detail-label">Student Name:</span> <span id="rName" class="detail-value"></span></div>
+          <div class="receipt-row"><span class="detail-label">Register Number:</span> <span class="detail-value">731122205012</span></div>
+          <div class="receipt-row"><span class="detail-label">Payment Date:</span> <span id="rDate" class="detail-value"></span></div>
+          <div class="receipt-row"><span class="detail-label">Payment Status:</span> <span class="detail-value" style="color:var(--teal); font-weight:600;">SUCCESS</span></div>
+          <div class="receipt-row"><span class="detail-label">Payment Mode:</span> <span id="rMode" class="detail-value"></span></div>
+          
+          <div class="receipt-row total"><span class="detail-label">Amount Paid:</span> <span id="rAmount" class="detail-value"></span></div>
+        </div>
+        
+        <div style="display:flex; gap:12px;">
+          <button class="btn-navy w-100 justify-content-center" onclick="printReceipt()"><i class="fa-solid fa-print"></i> Print Receipt</button>
+          <button class="btn-sm-bad w-100" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+
+<script>
+  // Receipts Data
+  const receiptsData = [
+    { receiptNo: "REC-2026-8809", date: "02 Jul 2026", details: "Tuition Fee (Semester 5)", amount: "₹85,000", mode: "Net Banking", txn: "TXN_88019203" },
+    { receiptNo: "REC-2026-8790", date: "02 Jul 2026", details: "Exam Fee (Semester 5)", amount: "₹5,000", mode: "Credit Card", txn: "TXN_87901842" },
+    { receiptNo: "REC-2026-8789", date: "03 Jul 2026", details: "Lab & Equipment Fee (Semester 5)", amount: "₹10,000", mode: "UPI", txn: "TXN_87890124" }
+  ];
+
+  const tableBody = document.getElementById('receiptsTableBody');
+  const receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
+
+  function renderReceipts() {
+    tableBody.innerHTML = '';
+    receiptsData.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${r.receiptNo}</strong></td>
+        <td>${r.date}</td>
+        <td>${r.details}</td>
+        <td style="font-weight:600; color:var(--navy);">${r.amount}</td>
+        <td>${r.mode}</td>
+        <td>
+          <button class="btn-sm-good" onclick="openReceipt('${r.receiptNo}')">
+            <i class="fa-solid fa-file-pdf"></i> View / Print
+          </button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  }
+
+  window.openReceipt = function(receiptNo) {
+    const item = receiptsData.find(r => r.receiptNo === receiptNo);
+    if (item) {
+      document.getElementById('rTxnId').textContent = item.txn;
+      document.getElementById('rName').textContent = displayName;
+      document.getElementById('rDate').textContent = item.date;
+      document.getElementById('rMode').textContent = item.mode;
+      document.getElementById('rAmount').textContent = item.amount;
+      receiptModal.show();
+    }
+  };
+
+  window.printReceipt = function() {
+    const printContent = document.getElementById('printableReceipt').innerHTML;
+    const originalContent = document.body.innerHTML;
+    
+    // Simple mock print popup since window.print() prints the whole page:
+    alert("Sending to printing spooler... Receipt details parsed successfully!");
+  };
+
+  renderReceipts();
+</script>
+
+
+</body>
+</html>

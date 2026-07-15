@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPulse ERP | Unified Login Portal</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+
+  <div class="page-wrap">
+    <div class="auth-card">
+      <div class="row g-0">
+        <div class="col-md-6 brand-panel">
+          <div class="brand-logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>EduPulse ERP</span>
+          </div>
+
+          <div>
+            <div class="brand-headline">Institutional<br>Excellence,<br>Simplified.</div>
+            <div class="brand-sub">Access your academic records, faculty tools, and administrative controls through our
+              secure unified gateway.</div>
+          </div>
+
+          <div class="brand-secure">
+            <div class="secure-icon"><i class="fa-solid fa-lock"></i></div>
+            <div class="secure-text">SECURE END-TO-END ENCRYPTION</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 login-panel">
+          <div class="mobile-brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>EduPulse ERP</span>
+          </div>
+
+          <div class="welcome-title">Welcome Back</div>
+          <div class="welcome-sub">Please select your role and enter your credentials.</div>
+
+          <div class="role-selector" id="roleSelector">
+            <button type="button" class="role-tab active" data-role="student">Student</button>
+            <button type="button" class="role-tab" data-role="faculty">Faculty</button>
+            <button type="button" class="role-tab" data-role="admin">Admin</button>
+          </div>
+
+          <form id="loginForm" novalidate>
+            <label class="field-label" for="email">Institutional Email</label>
+            <div class="input-group-custom">
+              <i class="fa-solid fa-at leading-icon"></i>
+              <input type="email" class="form-control-custom" id="email" placeholder="name@institution.edu" required>
+            </div>
+
+            <div class="field-label-row">
+              <label class="field-label" for="password">Password</label>
+              <a href="forgot-password.html" class="forgot-link">Forgot Password?</a>
+            </div>
+            <div class="input-group-custom">
+              <i class="fa-solid fa-lock leading-icon"></i>
+              <input type="password" class="form-control-custom" id="password" placeholder="••••••••" required
+                minlength="6">
+              <button type="button" class="password-toggle" id="togglePassword">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+
+            <div class="remember-row">
+              <input class="form-check-input" type="checkbox" id="rememberDevice">
+              <label for="rememberDevice">Remember this device for 30 days</label>
+            </div>
+
+            <button type="submit" class="btn-signin" id="signInBtn">
+              <span id="btnLabel">Sign In to Dashboard</span>
+              <i class="fa-solid fa-arrow-right" id="btnIcon"></i>
+            </button>
+          </form>
+
+          <div class="divider-row">
+            <hr><span>Or continue with</span>
+            <hr>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-6">
+              <button class="sso-btn" id="ssoGoogleBtn" type="button">
+                <i class="fa-brands fa-google" style="color:#EA4335;"></i>
+                Google
+              </button>
+            </div>
+            <div class="col-6">
+              <button class="sso-btn" id="ssoMsBtn" type="button">
+                <span class="ms-logo">
+                  <span style="background:#F25022;"></span>
+                  <span style="background:#7FBA00;"></span>
+                  <span style="background:#01A6F0;"></span>
+                  <span style="background:#FFB900;"></span>
+                </span>
+                Microsoft
+              </button>
+            </div>
+          </div>
+
+          <div class="footer-text">
+            First-time user? <a href="#" id="manualRegisterLink" style="color: var(--navy); font-weight: 700; text-decoration: none;">Register Profile</a> &nbsp;·&nbsp; <a href="contact-support.html" id="contactSupportLink">Contact Support</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- First-Time Registration Modal -->
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: #FFF;">
+        <div class="modal-header" style="border-bottom: 1px solid #E2E5EC; padding: 20px 24px;">
+          <h5 class="modal-title" style="font-size: 16px; font-weight: 600; color: #1A1C20;">First-Time Login Registration</h5>
+        </div>
+        <div class="modal-body" style="padding: 24px;">
+          <p style="font-size: 13px; color: #737782; margin-bottom: 20px;">Welcome to EduPulse ERP! Set up your credentials manually below to configure your profile and register your account.</p>
+          <form id="registerForm">
+            
+            <div class="mb-3">
+              <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;" for="regEmail">Institutional Email</label>
+              <input type="email" class="form-control" id="regEmail" placeholder="name@institution.edu" required style="border-radius: 8px; border: 1px solid #E2E5EC; padding: 10px 14px; font-size: 13.5px; width: 100%;">
+            </div>
+
+            <div class="mb-3">
+              <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;" for="regRole">System Role</label>
+              <select class="form-select" id="regRole" required style="border-radius: 8px; border: 1px solid #E2E5EC; padding: 10px 14px; font-size: 13.5px; width: 100%;">
+                <option value="" disabled selected>Select Role</option>
+                <option value="student">Student</option>
+                <option value="faculty">Faculty</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;" for="regId">Unique ID (Reg No / Emp ID)</label>
+              <input type="text" class="form-control" id="regId" placeholder="e.g. 731122205012 or EMP-2024-802" required style="border-radius: 8px; border: 1px solid #E2E5EC; padding: 10px 14px; font-size: 13.5px; width: 100%;">
+            </div>
+
+            <div class="mb-3">
+              <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;" for="regName">Full Name</label>
+              <input type="text" class="form-control" id="regName" placeholder="e.g. Alice Smith" required style="border-radius: 8px; border: 1px solid #E2E5EC; padding: 10px 14px; font-size: 13.5px; width: 100%;">
+            </div>
+
+            <div class="mb-3">
+              <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;" for="regDept">Department</label>
+              <select class="form-select" id="regDept" required style="border-radius: 8px; border: 1px solid #E2E5EC; padding: 10px 14px; font-size: 13.5px; width: 100%;">
+                <option value="" disabled selected>Select Department</option>
+                <option value="IT">Information Tech (IT)</option>
+                <option value="CSE">Computer Science (CSE)</option>
+                <option value="ECE">Electronics & Comm (ECE)</option>
+                <option value="Admin Office">Admin Office</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;" for="regPassword">Set Password</label>
+              <input type="password" class="form-control" id="regPassword" placeholder="Minimum 6 characters" minlength="6" required style="border-radius: 8px; border: 1px solid #E2E5EC; padding: 10px 14px; font-size: 13.5px; width: 100%;">
+            </div>
+
+            <button type="submit" class="btn-signin w-100 justify-content-center mt-4" style="height: 44px; font-size: 14px; font-weight: 600; background: #003874; color: #FFF; border: none; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+              Register & Sign In <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

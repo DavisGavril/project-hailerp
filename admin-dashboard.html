@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Admin Dashboard</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+  :root{
+    --navy:#003874;
+    --navy-light:#1A4F95;
+    --teal:#006A61;
+    --bg:#F9F9FF;
+    --ink:#1A1C20;
+    --muted:#424751;
+    --muted2:#737782;
+    --border:#E2E5EC;
+    --sidebar-w:260px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    margin:0;
+  }
+
+  .dash-wrap{ display:flex; min-height:100vh; }
+
+  .sidebar{
+    width:var(--sidebar-w);
+    min-width:var(--sidebar-w);
+    background:var(--navy);
+    padding:28px 20px;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+    transition:transform .25s ease;
+    z-index:100;
+  }
+
+  .sidebar-logo{ display:flex; align-items:center; gap:10px; padding:0 8px; margin-bottom:36px; }
+  .sidebar-logo i{ color:#fff; font-size:24px; }
+  .sidebar-logo span{ color:#fff; font-size:18px; font-weight:600; letter-spacing:-0.3px; }
+
+  .sidebar-nav{ display:flex; flex-direction:column; gap:4px; flex:1; }
+
+  .nav-item{
+    display:flex; align-items:center; gap:12px; padding:11px 14px;
+    border-radius:8px; color:rgba(255,255,255,0.65); text-decoration:none;
+    font-size:14px; font-weight:500; transition:background .15s ease, color .15s ease;
+  }
+  .nav-item i{ width:18px; text-align:center; font-size:15px; }
+  .nav-item:hover{ background:rgba(255,255,255,0.06); color:#fff; }
+  .nav-item.active{ background:var(--navy-light); color:#A3C3FF; font-weight:600; }
+
+  .sidebar-footer{
+    display:flex; flex-direction:column; gap:4px;
+    border-top:1px solid rgba(255, 255, 255, 0.1); padding-top:16px;
+  }
+  .nav-item.logout:hover{ color:#FCA5A5; }
+
+  .main-area{ flex:1; min-width:0; display:flex; flex-direction:column; height:100vh; }
+
+  .topbar{
+    display:flex; align-items:center; gap:16px; padding:18px 32px;
+    background:rgba(255,255,255,0.7); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10;
+  }
+
+  .menu-toggle{ display:none; background:none; border:none; font-size:18px; color:var(--navy); }
+
+  .topbar-title h1{ font-size:20px; font-weight:600; letter-spacing:-0.3px; margin:0; color:var(--ink); }
+  .topbar-title span{ font-size:13px; color:var(--muted2); }
+
+  .topbar-actions{ margin-left:auto; display:flex; align-items:center; gap:20px; }
+
+  .icon-btn{
+    position:relative; background:#fff; border:1px solid var(--border);
+    width:40px; height:40px; border-radius:10px; color:var(--muted); font-size:16px;
+  }
+  .badge-dot{
+    position:absolute; top:8px; right:9px; width:7px; height:7px;
+    border-radius:50%; background:#E11D48; border:1.5px solid #fff;
+  }
+
+  .profile-chip{
+    display:flex; align-items:center; gap:10px; padding:6px 12px 6px 6px;
+    border-radius:10px; border:1px solid var(--border); background:#fff; cursor:pointer;
+  }
+  .avatar{
+    width:32px; height:32px; border-radius:50%; background:var(--navy); color:#fff;
+    font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  }
+  .profile-info{ display:flex; flex-direction:column; line-height:1.2; }
+  .profile-name{ font-size:13px; font-weight:600; color:var(--ink); }
+  .profile-role{ font-size:11px; color:var(--muted2); }
+  .profile-chip > i{ font-size:11px; color:var(--muted2); }
+
+  .content-scroll{ flex:1; overflow-y:auto; padding:28px 32px 48px; }
+
+  .welcome-banner{
+    background:linear-gradient(120deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius:16px; padding:28px 32px; display:flex; align-items:center;
+    justify-content:space-between; gap:20px; margin-bottom:24px; flex-wrap:wrap;
+  }
+  .welcome-banner h2{ color:#fff; font-size:22px; font-weight:700; letter-spacing:-0.4px; margin:0 0 6px; }
+  .welcome-banner p{ color:rgba(255,255,255,0.75); font-size:14px; margin:0; }
+  .welcome-banner p strong{ color:#fff; font-weight:600; }
+
+  .btn-outline-light-custom{
+    background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.3);
+    color:#fff; font-size:13px; font-weight:600; padding:10px 18px; border-radius:8px;
+    display:flex; align-items:center; gap:8px; white-space:nowrap;
+    cursor:pointer;
+  }
+  .btn-outline-light-custom:hover{ background:rgba(255,255,255,0.2); }
+
+  .stats-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:18px; margin-bottom:24px; }
+
+  .stat-card{
+    background:#fff; border:1px solid var(--border); border-radius:14px;
+    padding:20px; display:flex; gap:14px; align-items:flex-start;
+  }
+  .stat-icon{
+    width:42px; height:42px; border-radius:10px; display:flex;
+    align-items:center; justify-content:center; font-size:17px; flex-shrink:0;
+  }
+  .stat-body{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .stat-label{ font-size:12px; color:var(--muted2); font-weight:500; }
+  .stat-value{ font-size:22px; font-weight:700; letter-spacing:-0.4px; color:var(--ink); }
+  .stat-trend{ font-size:11.5px; color:var(--muted2); }
+  .stat-trend.up{ color:var(--teal); font-weight:600; }
+  .stat-trend.ok{ color:var(--teal); }
+  .stat-trend.warn{ color:#D97706; font-weight:600; }
+
+  .two-col{ display:grid; grid-template-columns:1.4fr 1fr; gap:20px; margin-bottom:24px; align-items:start; }
+  .panel{ background:#fff; border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:24px; }
+  .two-col .panel{ margin-bottom:0; }
+
+  .panel-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; gap:12px; flex-wrap:wrap; }
+  .panel-header h3{ font-size:15px; font-weight:600; margin:0; color:var(--ink); }
+
+  /* System logs */
+  .log-list{ display:flex; flex-direction:column; }
+  .log-item{ display:flex; align-items:center; gap:16px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .log-item:last-child{ border-bottom:none; padding-bottom:0; }
+  .log-badge{
+    font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; text-transform:uppercase;
+  }
+  .log-body{ font-size:13px; color:var(--ink); flex:1; }
+  .log-time{ font-size:11.5px; color:var(--muted2); }
+
+  @media (max-width: 1100px){
+    .stats-grid{ grid-template-columns:repeat(2, 1fr); }
+    .two-col{ grid-template-columns:1fr; }
+  }
+
+  @media (max-width: 900px){
+    .sidebar{ position:fixed; left:0; top:0; transform:translateX(-100%); box-shadow:0 0 24px rgba(0,0,0,0.2); }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-toggle{ display:block; }
+    .profile-info{ display:none; }
+  }
+
+  @media (max-width: 560px){
+    .stats-grid{ grid-template-columns:1fr; }
+    .topbar{ padding:16px; }
+    .content-scroll{ padding:20px 16px 40px; }
+  }
+
+</style>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="nav-item active">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="admin-users.html" class="nav-item">
+        <i class="fa-solid fa-users"></i><span>User Management</span>
+      </a>
+      <a href="admin-courses.html" class="nav-item">
+        <i class="fa-solid fa-graduation-cap"></i><span>Courses & Academics</span>
+      </a>
+      <a href="admin-finance.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Finance & Fees</span>
+      </a>
+      <a href="admin-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="admin-library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library Catalog</span>
+      </a>
+      <a href="admin-notices.html" class="nav-item">
+        <i class="fa-solid fa-bullhorn"></i><span>Notice Board</span>
+      </a>
+      <a href="admin-health.html" class="nav-item">
+        <i class="fa-solid fa-server"></i><span>System Health</span>
+      </a>
+      <a href="admin-tickets.html" class="nav-item">
+        <i class="fa-solid fa-ticket"></i><span>Support Tickets</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Admin Control Center</h1>
+        <span>Wednesday, 08 July 2026</span>
+      </div>
+
+            <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p id="notifText1">Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p id="notifText2">Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="admin-tickets.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">AD</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">AD</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Admin User</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">admin@institution.edu</span>
+                <span class="profile-dropdown-id" id="dropdownProfileId" style="font-size:10.5px; color:var(--muted2); font-weight:600; margin-top:2px;">ID: EMP-2022-001</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="welcome-banner">
+        <div>
+          <h2 id="welcomeHeading">Welcome control panel 👋</h2>
+          <p>System status is <strong>Excellent</strong>. No severe hardware notifications pending.</p>
+        </div>
+        <button class="btn-outline-light-custom"><i class="fa-solid fa-arrows-spin"></i> Run Diagnostic</button>
+      </section>
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,56,116,0.1); color:var(--navy);">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Active Portal Users</span>
+            <span class="stat-value" id="statValUsers">1,420</span>
+            <span class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> Sync active</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Active Courses</span>
+            <span class="stat-value" id="statValCourses">4</span>
+            <span class="stat-trend ok">Syllabi registered</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(217,119,6,0.1); color:#D97706;">
+            <i class="fa-solid fa-envelope-open-text"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Pending Leaves</span>
+            <span class="stat-value" id="statValLeaves">0</span>
+            <span class="stat-trend warn">Awaiting authorization</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(190,24,93,0.1); color:#BE185D;">
+            <i class="fa-solid fa-book"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Overdue Books</span>
+            <span class="stat-value" id="statValLibrary">0</span>
+            <span class="stat-trend warn">Fines accrued</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="two-col">
+        <div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Recent System Audit Logs</h3>
+            </div>
+
+            <div class="log-list">
+              <div class="log-item">
+                <span class="log-badge" style="background:rgba(0,106,97,0.1); color:var(--teal);">INFO</span>
+                <div class="log-body">Database backup operation succeeded.</div>
+                <div class="log-time">10 mins ago</div>
+              </div>
+              <div class="log-item">
+                <span class="log-badge" style="background:rgba(0,106,97,0.1); color:var(--teal);">INFO</span>
+                <div class="log-body">Active Directory synchronization completed successfully.</div>
+                <div class="log-time">1 hour ago</div>
+              </div>
+              <div class="log-item">
+                <span class="log-badge" style="background:rgba(217,119,6,0.1); color:#D97706;">WARN</span>
+                <div class="log-body">High response latency detected on payment gateway API.</div>
+                <div class="log-time">4 hours ago</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top: 20px;">
+            <div class="panel-header">
+              <h3>Recent Portal User Logins</h3>
+              <a href="admin-users.html" class="panel-link" id="viewAllLoginsLink">View Register</a>
+            </div>
+            <div class="log-list" id="dashboardRecentLogins">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Administrative Action Hub</h3>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:8px;">
+              <div>
+                <strong style="font-size:14px; color:var(--ink);">Curriculum Management</strong><br>
+                <span style="font-size:11.5px; color:var(--muted2);">Update courses, credits, and professors</span>
+              </div>
+              <a href="admin-courses.html" class="btn-sm-good panel-link" style="text-decoration:none;">Manage</a>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:8px;">
+              <div>
+                <strong style="font-size:14px; color:var(--ink);">Financial Audits</strong><br>
+                <span style="font-size:11.5px; color:var(--muted2);">Verify transactions and fee collection</span>
+              </div>
+              <a href="admin-finance.html" class="btn-sm-good panel-link" style="text-decoration:none;">Audit</a>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:8px;">
+              <div>
+                <strong style="font-size:14px; color:var(--ink);">Leave Authorization</strong><br>
+                <span style="font-size:11.5px; color:var(--muted2); font-weight:600; color:#D97706;">Review <span id="actionLeavesPending">0</span> pending requests</span>
+              </div>
+              <a href="admin-leaves.html" class="btn-sm-good panel-link" style="text-decoration:none;">Review</a>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="font-size:14px; color:var(--ink);">Broadcasting System</strong><br>
+                <span style="font-size:11.5px; color:var(--muted2);">Issue news, notices, and updates</span>
+              </div>
+              <a href="admin-notices.html" class="btn-sm-good panel-link" style="text-decoration:none;">Broadcast</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

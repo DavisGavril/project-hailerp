@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Publish Notice</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .notice-form-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1.9fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1000px) {
+    .notice-form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .notice-list-scroll {
+    max-height: 520px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 4px;
+  }
+  .faculty-notice-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+  }
+  .delete-notice-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: #DC2626;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .delete-notice-btn:hover {
+    background: #FEF2F2;
+  }
+  .notice-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    width: fit-content;
+    margin-bottom: 6px;
+  }
+  .nb-academic { background: rgba(0, 56, 116, 0.1); color: var(--navy); }
+  .nb-exams { background: rgba(220, 38, 38, 0.1); color: #DC2626; }
+  .nb-fees { background: rgba(217, 119, 6, 0.1); color: #D97706; }
+  .nb-general { background: rgba(0, 106, 97, 0.1); color: var(--teal); }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="faculty-dashboard.html" class="nav-item active">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="faculty-classes.html" class="nav-item">
+        <i class="fa-solid fa-chalkboard-user"></i><span>My Classes</span>
+      </a>
+      <a href="faculty-attendance.html" class="nav-item">
+        <i class="fa-solid fa-clipboard-user"></i><span>Attendance</span>
+      </a>
+      <a href="faculty-grades.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice"></i><span>Grades</span>
+      </a>
+      <a href="faculty-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="faculty-students.html" class="nav-item">
+        <i class="fa-solid fa-user-group"></i><span>Students</span>
+      </a>
+      <a href="faculty-timetable.html" class="nav-item">
+        <i class="fa-solid fa-calendar-days"></i><span>Timetable</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Notice Management</h1>
+        <span>Publish bulletins and announcements for the student board</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="faculty-notices.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">FA</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Faculty</span>
+              <span class="profile-role">Associate Professor</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">FA</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Faculty Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">faculty@institution.edu</span>
+                <span class="profile-dropdown-id" id="dropdownProfileId" style="font-size:10.5px; color:var(--muted2); font-weight:600; margin-top:2px;">ID: EMP-2024-704</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div class="notice-form-grid">
+        <!-- New notice form -->
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Publish New Notice</h3>
+          </div>
+          <form id="noticePublishForm">
+            <div class="form-group-custom">
+              <label for="noticeTitle">Notice Title</label>
+              <input type="text" class="form-control-custom2" id="noticeTitle" placeholder="e.g. Guest lecture syllabus change" required>
+            </div>
+            
+            <div class="form-group-custom">
+              <label for="noticeCategory">Category</label>
+              <select class="form-control-custom2" id="noticeCategory" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="academic">Academic</option>
+                <option value="exams">Exams</option>
+                <option value="fees">Fees</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="noticeSummary">Brief Summary</label>
+              <input type="text" class="form-control-custom2" id="noticeSummary" placeholder="e.g. One-line summary for student index card" required>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="noticeBody">Full Notice Text</label>
+              <textarea class="form-control-custom2" id="noticeBody" rows="5" placeholder="Detailed bullet points, guidelines, contacts..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-navy w-100 justify-content-center" style="height:42px;">
+              <i class="fa-solid fa-bullhorn"></i> Publish Bulletin
+            </button>
+          </form>
+        </section>
+
+        <!-- Existing notices list -->
+        <section class="panel">
+          <div class="panel-header" style="margin-bottom:20px;">
+            <h3>Currently Published Bulletins</h3>
+          </div>
+          
+          <div class="notice-list-scroll" id="publishedNoticesList">
+            <!-- Notices populated dynamically -->
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+<script>
+  // Prepopulate notices in localStorage if empty (already done in notices.html, but let's make sure it exists)
+  const defaultNotices = [
+    {
+      id: 1,
+      title: "Semester fee payment deadline extended to 20 July",
+      category: "fees",
+      date: "08 Jul 2026",
+      summary: "The institution has extended the last date for Semester 5 academic fee payments without fine.",
+      body: "Dear Students,\n\nIn response to representations from the Student Council, the management has approved an extension of the deadline for paying Semester 5 outstanding fees.\n\n- Extended Deadline: 20 July 2026\n- Payment Modes: Online via ERP Gateway, Net Banking, or Demand Draft.\n\nLate submissions after 20 July will attract a penalty fine of ₹100 per day. Please complete your transaction at the earliest in the Fees section."
+    },
+    {
+      id: 2,
+      title: "Guest lecture on AI Ethics by Dr. Larry Page — 12 July",
+      category: "academic",
+      date: "07 Jul 2026",
+      summary: "Join us for an enlightening guest session on Artificial Intelligence ethics, responsibilities, and future developments.",
+      body: "Dear Students & Faculty,\n\nWe are pleased to invite you to the Guest Lecture Series hosted by the Department of Information Technology.\n\n- Speaker: Dr. Larry Page\n- Topic: AI Ethics, Alignment, and Institutional Responsibilities\n- Date: 12 July 2026\n- Time: 10:00 AM – 12:00 PM\n- Venue: Main Auditorium (Block A)\n\nAttendance is mandatory for all III & IV-year students. Refreshments will be served afterwards."
+    }
+  ];
+
+  if (!localStorage.getItem('edupulse_notices')) {
+    localStorage.setItem('edupulse_notices', JSON.stringify(defaultNotices));
+  }
+
+  function getNotices() {
+    return JSON.parse(localStorage.getItem('edupulse_notices') || '[]');
+  }
+
+  function saveNotices(notices) {
+    localStorage.setItem('edupulse_notices', JSON.stringify(notices));
+  }
+
+  function renderNotices() {
+    const list = document.getElementById('publishedNoticesList');
+    list.innerHTML = '';
+    const notices = getNotices();
+
+    notices.forEach(n => {
+      const card = document.createElement('div');
+      card.className = 'faculty-notice-card';
+      const badgeClass = `nb-${n.category}`;
+      
+      card.innerHTML = `
+        <span class="notice-badge ${badgeClass}">${n.category}</span>
+        <h4 style="font-size:14px; font-weight:600; color:var(--ink); margin:4px 0 6px; padding-right:50px;">${n.title}</h4>
+        <div style="font-size:11.5px; color:var(--muted2); margin-bottom:8px;">Published on ${n.date}</div>
+        <p style="font-size:12.5px; color:var(--muted); margin:0; line-height:1.5;">${n.summary}</p>
+        <button class="delete-notice-btn" onclick="deleteNotice(${n.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+      `;
+      list.appendChild(card);
+    });
+
+    if (notices.length === 0) {
+      list.innerHTML = '<div style="padding:32px; text-align:center; color:var(--muted2); font-size:13px;">No notices published yet.</div>';
+    }
+  }
+
+  // Handle publishing
+  const form = document.getElementById('noticePublishForm');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById('noticeTitle').value;
+      const category = document.getElementById('noticeCategory').value;
+      const summary = document.getElementById('noticeSummary').value;
+      const body = document.getElementById('noticeBody').value;
+      
+      const notices = getNotices();
+      const options = { day: '2-digit', month: 'short', year: 'numeric' };
+      const todayStr = new Date().toLocaleDateString('en-GB', options).replace(/,/g, '');
+
+      const newNotice = {
+        id: Date.now(),
+        title: title,
+        category: category,
+        date: todayStr,
+        summary: summary,
+        body: body
+      };
+
+      notices.unshift(newNotice);
+      saveNotices(notices);
+      renderNotices();
+      form.reset();
+
+      alert("Bulletin published successfully onto the student portal noticeboard!");
+    });
+  }
+
+  window.deleteNotice = function(id) {
+    if (confirm("Are you sure you want to delete this notice? It will disappear from the student board as well.")) {
+      let notices = getNotices();
+      notices = notices.filter(n => n.id !== id);
+      saveNotices(notices);
+      renderNotices();
+    }
+  };
+
+  renderNotices();
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Class Section Requests</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .req-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1.9fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1000px) {
+    .req-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="faculty-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="faculty-classes.html" class="nav-item active">
+        <i class="fa-solid fa-chalkboard-user"></i><span>My Classes</span>
+      </a>
+      <a href="faculty-attendance.html" class="nav-item">
+        <i class="fa-solid fa-clipboard-user"></i><span>Attendance</span>
+      </a>
+      <a href="faculty-grades.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice"></i><span>Grades</span>
+      </a>
+      <a href="faculty-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="faculty-students.html" class="nav-item">
+        <i class="fa-solid fa-user-group"></i><span>Students</span>
+      </a>
+      <a href="faculty-timetable.html" class="nav-item">
+        <i class="fa-solid fa-calendar-days"></i><span>Timetable</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Class Section Requests</h1>
+        <span>Request extra classes, classroom changes, or make-up lab sections</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="faculty-notices.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">FA</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Faculty</span>
+              <span class="profile-role">Associate Professor</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">FA</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Faculty Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">faculty@institution.edu</span>
+                <span class="profile-dropdown-id" id="dropdownProfileId" style="font-size:10.5px; color:var(--muted2); font-weight:600; margin-top:2px;">ID: EMP-2024-704</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div class="req-grid">
+        <!-- New Request Form -->
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Request Session Slot</h3>
+          </div>
+          <form id="sectionRequestForm">
+            <div class="form-group-custom">
+              <label for="reqCourse">Course / Subject</label>
+              <select class="form-control-custom2" id="reqCourse" required>
+                <option value="" disabled selected>Select Course</option>
+                <option value="Cloud Computing (CS501)">Cloud Computing (CS501)</option>
+                <option value="Machine Learning Lab (CS502)">Machine Learning Lab (CS502)</option>
+                <option value="Prompt Engineering Seminar (CS503)">Prompt Engineering Seminar (CS503)</option>
+                <option value="Software Architecture (CS504)">Software Architecture (CS504)</option>
+              </select>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="reqClass">Target Class / Section</label>
+              <input type="text" class="form-control-custom2" id="reqClass" placeholder="e.g. B.Tech IT - Year III" required>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="reqLocation">Proposed Room / Venue</label>
+              <select class="form-control-custom2" id="reqLocation" required>
+                <option value="" disabled selected>Select Room</option>
+                <option value="Block C · Room 204">Block C · Room 204</option>
+                <option value="CSE Lab 3">CSE Lab 3 (Lab Block)</option>
+                <option value="Seminar Hall 1">Seminar Hall 1 (Admin Block)</option>
+              </select>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="reqTime">Proposed Date & Time</label>
+              <input type="datetime-local" class="form-control-custom2" id="reqTime" required>
+            </div>
+
+            <div class="form-group-custom">
+              <label for="reqReason">Reason for Booking</label>
+              <textarea class="form-control-custom2" id="reqReason" rows="3" placeholder="State reason (e.g. extra class for make-up hours, practical test...)" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-navy w-100 justify-content-center" style="height:42px;">
+              <i class="fa-solid fa-calendar-plus"></i> Submit Request
+            </button>
+          </form>
+        </section>
+
+        <!-- Requests History -->
+        <section class="panel">
+          <div class="panel-header" style="margin-bottom:20px;">
+            <h3>My Booking History</h3>
+          </div>
+          
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Course</th>
+                  <th>Location</th>
+                  <th>Date & Time</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="requestsTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+<script>
+  // History booking data
+  const defaultBookings = [
+    {
+      id: 1,
+      email: "prof.menon@institution.edu",
+      course: "Machine Learning Lab (CS502)",
+      classTarget: "B.Tech IT - Year III",
+      location: "CSE Lab 3",
+      datetime: "14 Jul 2026, 10:00 AM",
+      reason: "Make up lab classes for project evaluation",
+      status: "Approved"
+    },
+    {
+      id: 2,
+      email: "prof.menon@institution.edu",
+      course: "Cloud Computing (CS501)",
+      classTarget: "B.Tech IT - Year III",
+      location: "Block C · Room 204",
+      datetime: "10 Jul 2026, 02:00 PM",
+      reason: "Special guest lecture prep class",
+      status: "Pending"
+    }
+  ];
+
+  if (!localStorage.getItem('edupulse_bookings')) {
+    localStorage.setItem('edupulse_bookings', JSON.stringify(defaultBookings));
+  }
+
+  function getBookings() {
+    return JSON.parse(localStorage.getItem('edupulse_bookings') || '[]');
+  }
+
+  function saveBookings(bookings) {
+    localStorage.setItem('edupulse_bookings', JSON.stringify(bookings));
+  }
+
+  function renderBookings() {
+    const list = document.getElementById('requestsTableBody');
+    list.innerHTML = '';
+    const bookings = getBookings();
+    const myBookings = bookings.filter(b => b.email === emailParam);
+
+    myBookings.forEach(b => {
+      const tr = document.createElement('tr');
+      const badgeClass = b.status === 'Approved' ? 'badge-approved' : (b.status === 'Rejected' ? 'badge-rejected' : 'badge-pending');
+      
+      tr.innerHTML = `
+        <td><strong>${b.course}</strong><br><span style="font-size:11px; color:var(--muted2);">${b.classTarget}</span></td>
+        <td>${b.location}</td>
+        <td style="font-size:12.5px;">${b.datetime}</td>
+        <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${b.reason}">${b.reason}</td>
+        <td><span class="badge-pill-custom ${badgeClass}">${b.status}</span></td>
+      `;
+      list.appendChild(tr);
+    });
+
+    if (myBookings.length === 0) {
+      list.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--muted2);">No bookings requested yet.</td></tr>';
+    }
+  }
+
+  // Handle Form Submission
+  const reqForm = document.getElementById('sectionRequestForm');
+  if (reqForm) {
+    reqForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const course = document.getElementById('reqCourse').value;
+      const classTarget = document.getElementById('reqClass').value;
+      const location = document.getElementById('reqLocation').value;
+      const datetimeRaw = document.getElementById('reqTime').value;
+      const reason = document.getElementById('reqReason').value;
+
+      // Format datetime locally:
+      const dateObj = new Date(datetimeRaw);
+      const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+      const formattedDatetime = dateObj.toLocaleDateString('en-US', options).replace(/,/g, '');
+
+      const bookings = getBookings();
+      const newBooking = {
+        id: Date.now(),
+        email: emailParam,
+        course: course,
+        classTarget: classTarget,
+        location: location,
+        datetime: formattedDatetime,
+        reason: reason,
+        status: "Pending"
+      };
+
+      bookings.unshift(newBooking);
+      saveBookings(bookings);
+      renderBookings();
+      reqForm.reset();
+
+      alert("Your booking request has been submitted to the academic committee successfully!");
+    });
+  }
+
+  renderBookings();
+</script>
+
+
+</body>
+</html>

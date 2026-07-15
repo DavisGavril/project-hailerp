@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Grade Card</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .selector-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .semester-select {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .grade-card-printable {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 40px;
+    position: relative;
+  }
+  .transcript-header {
+    text-align: center;
+    border-bottom: 2px double var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+  }
+  .transcript-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--navy);
+    text-transform: uppercase;
+  }
+  .student-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .detail-label {
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .detail-value {
+    color: var(--ink);
+  }
+  
+  /* Print Styles */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .grade-card-printable, .grade-card-printable * {
+      visibility: visible;
+    }
+    .grade-card-printable {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+    }
+    .dash-wrap, .sidebar, .topbar, .selector-wrap {
+      display: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="student-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="my-courses.html" class="nav-item">
+        <i class="fa-solid fa-book-open"></i><span>My Courses</span>
+      </a>
+      <a href="attendance.html" class="nav-item">
+        <i class="fa-solid fa-clipboard-check"></i><span>Attendance</span>
+      </a>
+      <a href="grades.html" class="nav-item active">
+        <i class="fa-solid fa-chart-line"></i><span>Grades</span>
+      </a>
+      <a href="timetable.html" class="nav-item">
+        <i class="fa-solid fa-calendar-days"></i><span>Timetable</span>
+      </a>
+      <a href="fees.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Fees</span>
+      </a>
+      <a href="library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library</span>
+      </a>
+      <a href="student-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Grade Cards</h1>
+        <span>Official academic grade cards and semester transcripts</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="notices.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">ST</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Student</span>
+              <span class="profile-role">B.Tech IT · III Year</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">ST</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Student Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">student@institution.edu</span>
+                <span class="profile-dropdown-id" id="dropdownProfileId" style="font-size:10.5px; color:var(--muted2); font-weight:600; margin-top:2px;">ID: 731122205012</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div class="selector-wrap">
+        <div>
+          <label for="semSelect" style="font-size:13px; font-weight:600; color:var(--muted); margin-right:8px;">Choose Term</label>
+          <select id="semSelect" class="semester-select">
+            <option value="4">Semester IV (Jan – May 2026)</option>
+            <option value="3">Semester III (Jul – Dec 2025)</option>
+            <option value="2">Semester II (Jan – May 2025)</option>
+            <option value="1">Semester I (Jul – Dec 2024)</option>
+          </select>
+        </div>
+        <button class="btn-navy" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> Print Grade Card
+        </button>
+      </div>
+
+      <div class="grade-card-printable">
+        <div class="transcript-header">
+          <i class="fa-solid fa-graduation-cap" style="font-size:36px; color:var(--navy); margin-bottom:8px;"></i>
+          <h2 class="transcript-title">EduPulse Institute of Technology</h2>
+          <div style="font-size:13px; color:var(--muted2); font-weight:500;">AFFILIATED TO STATE TECHNOLOGICAL UNIVERSITY · GRADE REPORT</div>
+        </div>
+
+        <div class="student-details-grid">
+          <div><span class="detail-label">Student Name:</span> <span class="detail-value" id="transName">Student Name</span></div>
+          <div><span class="detail-label">Degree / Program:</span> <span class="detail-value">Bachelor of Technology (B.Tech)</span></div>
+          <div><span class="detail-label">Register Number:</span> <span class="detail-value">731122205012</span></div>
+          <div><span class="detail-label">Department / Branch:</span> <span class="detail-value">Information Technology (IT)</span></div>
+          <div><span class="detail-label">Semester:</span> <span class="detail-value" id="transSem">Semester IV</span></div>
+          <div><span class="detail-label">Month & Year of Exam:</span> <span class="detail-value" id="transDate">May 2026</span></div>
+        </div>
+
+        <table class="data-table" style="margin-bottom:28px;">
+          <thead>
+            <tr>
+              <th>Course Code</th>
+              <th>Course Title</th>
+              <th>Credits</th>
+              <th>Letter Grade</th>
+              <th>Grade Points</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="transcriptBody">
+            <!-- Dynamically Populated -->
+          </tbody>
+        </table>
+
+        <div class="row g-4 align-items-center" style="border-top: 1px solid var(--border); padding-top:20px;">
+          <div class="col-sm-6">
+            <div style="font-size:14px; color:var(--muted); line-height:1.6;">
+              <div><strong>Semester SGPA:</strong> <span id="transSGPA" style="font-weight:700; color:var(--navy);">8.92</span></div>
+              <div><strong>Cumulative CGPA:</strong> <span style="font-weight:700; color:var(--navy);">8.74</span></div>
+            </div>
+          </div>
+          <div class="col-sm-6 text-sm-end">
+            <div style="font-size:12px; color:var(--muted2); font-style:italic;">
+              Computer Generated Transcript. No signature required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+<script>
+  // Transcript Data
+  const semData = {
+    "4": {
+      semLabel: "Semester IV",
+      examDate: "May 2026",
+      sgpa: "8.92",
+      courses: [
+        { code: "CS401", title: "Database Management Systems", credits: 4, grade: "O", points: 10, result: "PASS" },
+        { code: "CS402", title: "Design and Analysis of Algorithms", credits: 4, grade: "A+", points: 9, result: "PASS" },
+        { code: "CS403", title: "Operating Systems", credits: 3, grade: "A", points: 8, result: "PASS" },
+        { code: "CS404", title: "Computer Networks", credits: 3, grade: "B+", points: 7, result: "PASS" },
+        { code: "CS405", title: "Formal Languages & Automata Theory", credits: 3, grade: "A+", points: 9, result: "PASS" },
+        { code: "CS408", title: "Algorithms Laboratory", credits: 2, grade: "O", points: 10, result: "PASS" }
+      ]
+    },
+    "3": {
+      semLabel: "Semester III",
+      examDate: "Dec 2025",
+      sgpa: "8.65",
+      courses: [
+        { code: "CS301", title: "Data Structures and OOP", credits: 4, grade: "A+", points: 9, result: "PASS" },
+        { code: "CS302", title: "Digital Logic & Computer Organization", credits: 4, grade: "A", points: 8, result: "PASS" },
+        { code: "MA301", title: "Discrete Mathematics", credits: 4, grade: "B+", points: 7, result: "PASS" },
+        { code: "IT301", title: "Web Technology Fundamentals", credits: 3, grade: "O", points: 10, result: "PASS" },
+        { code: "CS307", title: "Data Structures Laboratory", credits: 2, grade: "O", points: 10, result: "PASS" }
+      ]
+    },
+    "2": {
+      semLabel: "Semester II",
+      examDate: "May 2025",
+      sgpa: "8.80",
+      courses: [
+        { code: "PH201", title: "Physics for Information Science", credits: 4, grade: "A+", points: 9, result: "PASS" },
+        { code: "MA201", title: "Transforms and Partial Differential Equations", credits: 4, grade: "A", points: 8, result: "PASS" },
+        { code: "CS201", title: "Programming in C++", credits: 3, grade: "O", points: 10, result: "PASS" },
+        { code: "EE201", title: "Basic Electrical & Electronics Engineering", credits: 3, grade: "A+", points: 9, result: "PASS" },
+        { code: "CS207", title: "C++ Programming Laboratory", credits: 2, grade: "O", points: 10, result: "PASS" }
+      ]
+    },
+    "1": {
+      semLabel: "Semester I",
+      examDate: "Dec 2024",
+      sgpa: "8.58",
+      courses: [
+        { code: "HS101", title: "Professional English Communication", credits: 3, grade: "A", points: 8, result: "PASS" },
+        { code: "MA101", title: "Matrices and Calculus", credits: 4, grade: "B+", points: 7, result: "PASS" },
+        { code: "CY101", title: "Engineering Chemistry", credits: 4, grade: "A+", points: 9, result: "PASS" },
+        { code: "CS101", title: "Problem Solving and Python Programming", credits: 3, grade: "O", points: 10, result: "PASS" },
+        { code: "CS107", title: "Python Programming Laboratory", credits: 2, grade: "O", points: 10, result: "PASS" }
+      ]
+    }
+  };
+
+  const semSelect = document.getElementById('semSelect');
+  const transSemEl = document.getElementById('transSem');
+  const transDateEl = document.getElementById('transDate');
+  const transSGPAEl = document.getElementById('transSGPA');
+  const transcriptBody = document.getElementById('transcriptBody');
+
+  function renderTranscript(semVal) {
+    const data = semData[semVal];
+    if (!data) return;
+
+    transSemEl.textContent = data.semLabel;
+    transDateEl.textContent = data.examDate;
+    transSGPAEl.textContent = data.sgpa;
+
+    transcriptBody.innerHTML = '';
+    data.courses.forEach(c => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${c.code}</strong></td>
+        <td>${c.title}</td>
+        <td>${c.credits}</td>
+        <td><strong>${c.grade}</strong></td>
+        <td>${c.points}</td>
+        <td><span class="pill pill-good">${c.result}</span></td>
+      `;
+      transcriptBody.appendChild(tr);
+    });
+  }
+
+  semSelect.addEventListener('change', (e) => {
+    renderTranscript(e.target.value);
+  });
+
+  // Initial render
+  renderTranscript("4");
+</script>
+
+
+</body>
+</html>

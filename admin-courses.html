@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Courses & Academics Manager</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .filter-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="admin-users.html" class="nav-item">
+        <i class="fa-solid fa-users"></i><span>User Management</span>
+      </a>
+      <a href="admin-courses.html" class="nav-item active">
+        <i class="fa-solid fa-graduation-cap"></i><span>Courses & Academics</span>
+      </a>
+      <a href="admin-finance.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Finance & Fees</span>
+      </a>
+      <a href="admin-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="admin-library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library Catalog</span>
+      </a>
+      <a href="admin-notices.html" class="nav-item">
+        <i class="fa-solid fa-bullhorn"></i><span>Notice Board</span>
+      </a>
+      <a href="admin-health.html" class="nav-item">
+        <i class="fa-solid fa-server"></i><span>System Health</span>
+      </a>
+      <a href="admin-tickets.html" class="nav-item">
+        <i class="fa-solid fa-ticket"></i><span>Support Tickets</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Courses & Curricula Registry</h1>
+        <span>Govern course schemes, allocate credits, and assign faculty profiles</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="admin-tickets.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">AD</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">AD</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Admin Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">admin@institution.edu</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,56,116,0.1); color:var(--navy);">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Total Curricula</span>
+            <span class="stat-value" id="statsTotalCourses">4</span>
+            <span class="stat-trend ok">Active semesters 1-8</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-school"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Departments</span>
+            <span class="stat-value">3</span>
+            <span class="stat-trend">CSE, IT, ECE</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(217,119,6,0.1); color:#D97706;">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label font-weight-bold">Assigned Faculty</span>
+            <span class="stat-value" id="statsAssignedFaculty">2</span>
+            <span class="stat-trend ok">Profiles synced</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(190,24,93,0.1); color:#BE185D;">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Total Credits</span>
+            <span class="stat-value" id="statsTotalCredits">14</span>
+            <span class="stat-trend">Academic weightage</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="filter-wrap">
+          <div style="display:flex; gap:12px; flex:1; max-width:600px;">
+            <input type="text" class="form-control-custom2" id="searchCourse" placeholder="Search by course code, title, department...">
+            <select class="form-control-custom2" id="filterDept" style="max-width:160px;">
+              <option value="all">All Depts</option>
+              <option value="IT">IT</option>
+              <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+            </select>
+          </div>
+          <button class="btn-navy" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+            <i class="fa-solid fa-plus"></i> Add New Course
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Course Code</th>
+                <th>Course Title</th>
+                <th>Department</th>
+                <th>Semester</th>
+                <th>Credits</th>
+                <th>Assigned Faculty</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="coursesTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- Add Course Modal -->
+<div class="modal fade" id="addCourseModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:14px; border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h5 class="modal-title" style="font-size:16px; font-weight:600; color:var(--ink);">Add New Curriculum Course</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <form id="addCourseForm">
+          <div class="row">
+            <div class="col-sm-6 form-group-custom">
+              <label for="newCourseCode">Course Code</label>
+              <input type="text" class="form-control-custom2" id="newCourseCode" placeholder="e.g. CS501" required>
+            </div>
+            <div class="col-sm-6 form-group-custom">
+              <label for="newCourseCredits">Credits</label>
+              <input type="number" class="form-control-custom2" id="newCourseCredits" placeholder="3" min="1" max="6" required>
+            </div>
+          </div>
+          <div class="form-group-custom">
+            <label for="newCourseTitle">Course Title</label>
+            <input type="text" class="form-control-custom2" id="newCourseTitle" placeholder="e.g. Cloud Computing Architecture" required>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 form-group-custom">
+              <label for="newCourseDept">Department</label>
+              <select class="form-control-custom2" id="newCourseDept" required>
+                <option value="" disabled selected>Select Dept</option>
+                <option value="IT">IT</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+              </select>
+            </div>
+            <div class="col-sm-6 form-group-custom">
+              <label for="newCourseSem">Semester</label>
+              <select class="form-control-custom2" id="newCourseSem" required>
+                <option value="" disabled selected>Select Semester</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group-custom">
+            <label for="newCourseFaculty">Assign Instructor</label>
+            <select class="form-control-custom2" id="newCourseFaculty" required>
+              <option value="" disabled selected>Select Professor</option>
+              <option value="Prof. S. Iyer">Prof. S. Iyer</option>
+              <option value="Dr. R. Menon">Dr. R. Menon</option>
+              <option value="TBD">TBD / Unassigned</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-navy w-100 justify-content-center mt-3" style="height:42px;">
+            <i class="fa-solid fa-circle-check"></i> Register Course
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+
+<script>
+  // Course management data structures
+  const defaultCourses = [
+    { code: "CS501", title: "Cloud Computing Architecture", dept: "CSE", sem: "5", credits: 3, faculty: "Prof. S. Iyer", status: "Active" },
+    { code: "CS502", title: "Machine Learning Concepts", dept: "IT", sem: "5", credits: 4, faculty: "Dr. R. Menon", status: "Active" },
+    { code: "CS503", title: "Security in Computing Standards", dept: "IT", sem: "5", credits: 3, faculty: "Prof. S. Iyer", status: "Active" },
+    { code: "IT601", title: "Web Technologies & Deployment", dept: "IT", sem: "6", credits: 4, faculty: "Dr. R. Menon", status: "Active" }
+  ];
+
+  if (!localStorage.getItem('edupulse_courses')) {
+    localStorage.setItem('edupulse_courses', JSON.stringify(defaultCourses));
+  }
+
+  function getCourses() {
+    return JSON.parse(localStorage.getItem('edupulse_courses') || '[]');
+  }
+
+  function saveCourses(courses) {
+    localStorage.setItem('edupulse_courses', JSON.stringify(courses));
+  }
+
+  const tableBody = document.getElementById('coursesTableBody');
+  const searchInput = document.getElementById('searchCourse');
+  const filterDept = document.getElementById('filterDept');
+  let searchQuery = '';
+  let selectedDept = 'all';
+
+  function renderCourses() {
+    tableBody.innerHTML = '';
+    const courses = getCourses();
+
+    const filtered = courses.filter(c => {
+      const matchesSearch = c.code.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            c.faculty.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesDept = selectedDept === 'all' || c.dept === selectedDept;
+      return matchesSearch && matchesDept;
+    });
+
+    filtered.forEach(c => {
+      const tr = document.createElement('tr');
+      const pillClass = c.status === 'Active' ? 'pill-good' : 'pill-bad';
+      const actionLabel = c.status === 'Active' ? 'Suspend' : 'Activate';
+      const actionBtnClass = c.status === 'Active' ? 'btn-sm-bad' : 'btn-sm-good';
+
+      tr.innerHTML = `
+        <td><strong>${c.code}</strong></td>
+        <td>${c.title}</td>
+        <td><strong>${c.dept}</strong></td>
+        <td>Semester ${c.sem}</td>
+        <td>${c.credits} Credits</td>
+        <td>${c.faculty}</td>
+        <td><span class="pill ${pillClass}">${c.status}</span></td>
+        <td>
+          <button class="${actionBtnClass}" onclick="toggleCourseStatus('${c.code}')">${actionLabel}</button>
+          <button class="btn-sm-bad ms-1" style="background:#ECEFF4; color:#BE185D; border:1px solid #E2E5EC;" onclick="deleteCourse('${c.code}')"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    if (filtered.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--muted2);">No courses registered under these parameters.</td></tr>';
+    }
+
+    // Update stats cards
+    document.getElementById('statsTotalCourses').textContent = courses.length;
+    
+    // Count distinct faculty
+    const uniqueFaculty = new Set(courses.map(c => c.faculty).filter(f => f !== 'TBD'));
+    document.getElementById('statsAssignedFaculty').textContent = uniqueFaculty.size;
+
+    // Sum credits
+    const totalCredits = courses.reduce((sum, c) => sum + parseInt(c.credits), 0);
+    document.getElementById('statsTotalCredits').textContent = totalCredits;
+  }
+
+  window.toggleCourseStatus = function(code) {
+    const courses = getCourses();
+    const course = courses.find(c => c.code === code);
+    if (course) {
+      course.status = course.status === 'Active' ? 'Suspended' : 'Active';
+      saveCourses(courses);
+      renderCourses();
+    }
+  };
+
+  window.deleteCourse = function(code) {
+    if (confirm(`Are you sure you want to delete course ${code}?`)) {
+      let courses = getCourses();
+      courses = courses.filter(c => c.code !== code);
+      saveCourses(courses);
+      renderCourses();
+    }
+  };
+
+  // Add course form handler
+  const addCourseForm = document.getElementById('addCourseForm');
+  const courseModal = new bootstrap.Modal(document.getElementById('addCourseModal'));
+
+  if (addCourseForm) {
+    addCourseForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = document.getElementById('newCourseCode').value.toUpperCase();
+      const title = document.getElementById('newCourseTitle').value;
+      const credits = parseInt(document.getElementById('newCourseCredits').value);
+      const dept = document.getElementById('newCourseDept').value;
+      const sem = document.getElementById('newCourseSem').value;
+      const faculty = document.getElementById('newCourseFaculty').value;
+
+      const courses = getCourses();
+      
+      // Check duplicate code
+      if (courses.some(c => c.code === code)) {
+        alert(`Error: A course with code ${code} is already registered!`);
+        return;
+      }
+
+      const newCourse = {
+        code: code,
+        title: title,
+        dept: dept,
+        sem: sem,
+        credits: credits,
+        faculty: faculty,
+        status: "Active"
+      };
+
+      courses.push(newCourse);
+      saveCourses(courses);
+      renderCourses();
+      addCourseForm.reset();
+      courseModal.hide();
+
+      alert(`Course ${code} registered successfully!`);
+    });
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderCourses();
+  });
+
+  filterDept.addEventListener('change', (e) => {
+    selectedDept = e.target.value;
+    renderCourses();
+  });
+
+  renderCourses();
+</script>
+
+
+
+</body>
+</html>

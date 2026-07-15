@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Support Tickets</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .clickable-row {
+    cursor: pointer;
+  }
+  .clickable-row:hover {
+    background: #F4F6FB !important;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="admin-users.html" class="nav-item">
+        <i class="fa-solid fa-users"></i><span>User Management</span>
+      </a>
+      <a href="admin-courses.html" class="nav-item">
+        <i class="fa-solid fa-graduation-cap"></i><span>Courses & Academics</span>
+      </a>
+      <a href="admin-finance.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Finance & Fees</span>
+      </a>
+      <a href="admin-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+      <a href="admin-library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library Catalog</span>
+      </a>
+      <a href="admin-notices.html" class="nav-item">
+        <i class="fa-solid fa-bullhorn"></i><span>Notice Board</span>
+      </a>
+      <a href="admin-health.html" class="nav-item">
+        <i class="fa-solid fa-server"></i><span>System Health</span>
+      </a>
+      <a href="admin-tickets.html" class="nav-item active">
+        <i class="fa-solid fa-ticket"></i><span>Support Tickets</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>IT Support Desk</h1>
+        <span>Resolve user issues, login problems, and functional tickets</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="admin-tickets.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">AD</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">AD</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Admin Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">admin@institution.edu</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="panel">
+        <div class="filter-bar">
+          <div style="display:flex; gap:12px; flex:1; max-width:400px;">
+            <input type="text" class="form-control-custom2" id="searchTicket" placeholder="Search by Ticket ID, submitter, or subject...">
+          </div>
+          <div style="font-size:13px; font-weight:600; color:var(--muted);">
+            Double-click or click action to review/reply
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Submitter Details</th>
+                <th>Subject</th>
+                <th>Date Filed</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="ticketsTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- Ticket Detail Modal -->
+<div class="modal fade" id="ticketDetailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="border-radius:14px; border:none; box-shadow:0 12px 30px rgba(0,0,0,0.15);">
+      <div class="modal-header" style="border-bottom:1px solid var(--border);">
+        <h5 class="modal-title" style="font-size:16px; font-weight:600; color:var(--ink);">Review Support Ticket</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <div style="background:#FAFAFD; border:1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:20px;">
+          <div class="row g-3" style="font-size:13px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:16px;">
+            <div class="col-sm-4"><strong>Ticket ID:</strong> <span id="dtId"></span></div>
+            <div class="col-sm-4"><strong>Date Filed:</strong> <span id="dtDate"></span></div>
+            <div class="col-sm-4"><strong>Current Status:</strong> <span id="dtStatus"></span></div>
+            <div class="col-sm-6"><strong>User:</strong> <span id="dtUser"></span> (<span id="dtRole"></span>)</div>
+            <div class="col-sm-6"><strong>Email:</strong> <span id="dtEmail"></span></div>
+          </div>
+          <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:8px;" id="dtSubject"></div>
+          <div style="font-size:13.5px; color:var(--muted); line-height:1.6; white-space:pre-wrap;" id="dtDesc"></div>
+        </div>
+
+        <form id="ticketReplyForm">
+          <div class="row">
+            <div class="col-sm-6 form-group-custom">
+              <label for="replyStatus">Update Ticket Status</label>
+              <select class="form-control-custom2" id="replyStatus" required>
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+            </div>
+            <div class="col-sm-6 form-group-custom">
+              <label for="itAgent">Responding Agent</label>
+              <input type="text" class="form-control-custom2" id="itAgent" readonly>
+            </div>
+          </div>
+          <div class="form-group-custom">
+            <label for="replyText">Support Agent Response / Resolution Note</label>
+            <textarea class="form-control-custom2" id="replyText" rows="4" placeholder="Write reply to be dispatched to user's registered email address..." required></textarea>
+          </div>
+          <button type="submit" class="btn-navy w-100 justify-content-center" style="height:44px;">
+            <i class="fa-solid fa-envelope-circle-check"></i> Submit Response & Send Email
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+
+<script>
+  // Support Tickets Data
+  const defaultTickets = [
+    {
+      id: "TKT-1024",
+      name: "Karthik S",
+      email: "karthik.s@institution.edu",
+      role: "Student",
+      subject: "Grade mismatch on DBMS paper",
+      desc: "My internal assessment marks for DBMS are shown as 15/20 instead of 18/20 which was confirmed by the professor. Please check.",
+      date: "08 Jul 2026",
+      status: "Open"
+    },
+    {
+      id: "TKT-1023",
+      name: "Prof. Menon",
+      email: "prof.menon@institution.edu",
+      role: "Faculty",
+      subject: "Need class roster export privileges",
+      desc: "Requesting access permissions to export student registers directly in Excel format.",
+      date: "07 Jul 2026",
+      status: "In Progress"
+    }
+  ];
+
+  if (!localStorage.getItem('edupulse_support_tickets')) {
+    localStorage.setItem('edupulse_support_tickets', JSON.stringify(defaultTickets));
+  }
+
+  function getTickets() {
+    return JSON.parse(localStorage.getItem('edupulse_support_tickets') || '[]');
+  }
+
+  function saveTickets(tickets) {
+    localStorage.setItem('edupulse_support_tickets', JSON.stringify(tickets));
+  }
+
+  const tableBody = document.getElementById('ticketsTableBody');
+  const searchInput = document.getElementById('searchTicket');
+  let searchQuery = '';
+  let activeTicketId = null;
+
+  const detailModal = new bootstrap.Modal(document.getElementById('ticketDetailModal'));
+
+  function renderTickets() {
+    tableBody.innerHTML = '';
+    const tickets = getTickets();
+
+    const filtered = tickets.filter(t => {
+      return t.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             t.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             t.role.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    filtered.forEach(t => {
+      const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.ondblclick = () => openTicket(t.id);
+      
+      const badgeClass = t.status === 'Resolved' ? 'badge-approved' : (t.status === 'In Progress' ? 'badge-pending' : 'badge-rejected');
+
+      tr.innerHTML = `
+        <td><strong>${t.id}</strong></td>
+        <td><strong>${t.name}</strong><br><span style="font-size:11px; color:var(--muted2);">${t.email}</span></td>
+        <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><strong>${t.subject}</strong><br><span style="font-size:12px; color:var(--muted);">${t.desc}</span></td>
+        <td>${t.date}</td>
+        <td><span class="badge-pill-custom ${badgeClass}">${t.status}</span></td>
+        <td>
+          <button class="btn-sm-good" onclick="openTicket('${t.id}')">Review</button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    if (filtered.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--muted2);">No tickets in queue.</td></tr>';
+    }
+  }
+
+  window.openTicket = function(id) {
+    const tickets = getTickets();
+    const t = tickets.find(x => x.id === id);
+    if (t) {
+      activeTicketId = id;
+      document.getElementById('dtId').textContent = t.id;
+      document.getElementById('dtDate').textContent = t.date;
+      document.getElementById('dtStatus').textContent = t.status;
+      document.getElementById('dtUser').textContent = t.name;
+      document.getElementById('dtRole').textContent = t.role;
+      document.getElementById('dtEmail').textContent = t.email;
+      document.getElementById('dtSubject').textContent = t.subject;
+      document.getElementById('dtDesc').textContent = t.desc;
+      
+      document.getElementById('replyStatus').value = t.status;
+      document.getElementById('replyText').value = '';
+
+      detailModal.show();
+    }
+  };
+
+  // Handle reply form
+  const replyForm = document.getElementById('ticketReplyForm');
+  if (replyForm) {
+    replyForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const newStatus = document.getElementById('replyStatus').value;
+      const replyVal = document.getElementById('replyText').value;
+
+      const tickets = getTickets();
+      const tIndex = tickets.findIndex(x => x.id === activeTicketId);
+      if (tIndex !== -1) {
+        tickets[tIndex].status = newStatus;
+        saveTickets(tickets);
+        renderTickets();
+        detailModal.hide();
+        alert(`Resolution submitted! Reply email dispatched to ${tickets[tIndex].email}. Ticket status set to: ${newStatus}`);
+      }
+    });
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderTickets();
+  });
+
+  renderTickets();
+</script>
+
+
+</body>
+</html>

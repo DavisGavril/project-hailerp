@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Course Registration</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .reg-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1.2fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1000px) {
+    .reg-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .elective-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .elective-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+  .elective-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .elective-meta {
+    font-size: 12px;
+    color: var(--muted2);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .elective-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .credits-pill {
+    background: rgba(0, 56, 116, 0.08);
+    color: var(--navy);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .registered-item {
+    padding: 12px;
+    border-radius: 8px;
+    background: #F4F6FB;
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="student-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="my-courses.html" class="nav-item active">
+        <i class="fa-solid fa-book-open"></i><span>My Courses</span>
+      </a>
+      <a href="attendance.html" class="nav-item">
+        <i class="fa-solid fa-clipboard-check"></i><span>Attendance</span>
+      </a>
+      <a href="grades.html" class="nav-item">
+        <i class="fa-solid fa-chart-line"></i><span>Grades</span>
+      </a>
+      <a href="timetable.html" class="nav-item">
+        <i class="fa-solid fa-calendar-days"></i><span>Timetable</span>
+      </a>
+      <a href="fees.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Fees</span>
+      </a>
+      <a href="library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library</span>
+      </a>
+      <a href="student-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Course Registration</h1>
+        <span>Odd Semester Elective Selections · Academic Year 2026-27</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="notices.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">ST</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Student</span>
+              <span class="profile-role">B.Tech IT · III Year</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">ST</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Student Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">student@institution.edu</span>
+                <span class="profile-dropdown-id" id="dropdownProfileId" style="font-size:10.5px; color:var(--muted2); font-weight:600; margin-top:2px;">ID: 731122205012</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div class="welcome-banner">
+        <div>
+          <h2>Semester 6 Electives Registration 🚀</h2>
+          <p>Please select your courses below. You can register for a maximum of <strong>2 electives (6 credits)</strong>.</p>
+        </div>
+      </div>
+
+      <div class="reg-grid">
+        <!-- Electives List -->
+        <section class="panel">
+          <div class="panel-header" style="margin-bottom:24px;">
+            <h3>Available Elective Papers</h3>
+          </div>
+          
+          <div id="electivesList">
+            <!-- Dynamically populated -->
+          </div>
+        </section>
+
+        <!-- Credit Tracker & Registered Cart -->
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Your Selections</h3>
+          </div>
+
+          <div style="margin-bottom:24px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:8px; color:var(--muted);">
+              <span>Credit Limit Tracker</span>
+              <span id="creditsValue">0 / 6 Credits</span>
+            </div>
+            <div class="progress-track" style="height:10px;">
+              <div class="progress-fill" id="creditsProgressBar" style="width:0%; background:var(--navy);"></div>
+            </div>
+          </div>
+
+          <div id="registeredCart" style="margin-bottom:24px; min-height:80px;">
+            <!-- Cart populated dynamically -->
+          </div>
+
+          <button class="btn-navy w-100 justify-content-center" id="submitRegistrationBtn" style="height:44px;" disabled>
+            <i class="fa-solid fa-circle-check"></i> Submit & Lock Registration
+          </button>
+        </section>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+<script>
+  // Elective Course Data
+  const electivesData = [
+    { id: "CS611", title: "Advanced Deep Learning", credits: 3, dept: "CSE", faculty: "Prof. S. Iyer", capacity: 60, registeredCount: 42 },
+    { id: "CS612", title: "Distributed Systems & Blockchain", credits: 3, dept: "IT", faculty: "Dr. R. Menon", capacity: 60, registeredCount: 18 },
+    { id: "CS613", title: "Human-Computer Interaction", credits: 3, dept: "IT", faculty: "Prof. A. Nair", capacity: 60, registeredCount: 59 },
+    { id: "CS614", title: "Natural Language Processing", credits: 3, dept: "CSE", faculty: "Dr. K. Bala", capacity: 60, registeredCount: 30 },
+    { id: "CS615", title: "Cyber Security & Cryptography", credits: 3, dept: "IT", faculty: "Dr. P. Suresh", capacity: 60, registeredCount: 52 }
+  ];
+
+  // Cart logic
+  let registeredIds = JSON.parse(localStorage.getItem('edupulse_registered_electives') || '[]');
+  const submitBtn = document.getElementById('submitRegistrationBtn');
+
+  function renderElectives() {
+    const listContainer = document.getElementById('electivesList');
+    listContainer.innerHTML = '';
+
+    electivesData.forEach(c => {
+      const isSelected = registeredIds.includes(c.id);
+      const isFull = c.registeredCount >= c.capacity;
+      
+      const buttonHtml = isSelected
+        ? `<button class="btn-sm-bad" onclick="removeElective('${c.id}')"><i class="fa-solid fa-minus"></i> Remove</button>`
+        : (isFull 
+            ? `<button class="btn-navy" style="opacity:0.4; pointer-events:none;" disabled>Full</button>` 
+            : `<button class="btn-navy" onclick="addElective('${c.id}')"><i class="fa-solid fa-plus"></i> Add Course</button>`);
+
+      const card = document.createElement('div');
+      card.className = 'elective-card';
+      card.innerHTML = `
+        <div class="elective-info">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="credits-pill">${c.id}</span>
+            <span class="elective-title">${c.title}</span>
+          </div>
+          <div class="elective-meta">
+            <span><i class="fa-solid fa-user-tie"></i> ${c.faculty}</span>
+            <span><i class="fa-solid fa-graduation-cap"></i> Credits: ${c.credits}</span>
+            <span><i class="fa-solid fa-users"></i> ${c.registeredCount}/${c.capacity} Registered</span>
+          </div>
+        </div>
+        <div>
+          ${buttonHtml}
+        </div>
+      `;
+      listContainer.appendChild(card);
+    });
+  }
+
+  function renderCart() {
+    const cartContainer = document.getElementById('registeredCart');
+    cartContainer.innerHTML = '';
+    
+    let totalCredits = 0;
+    
+    registeredIds.forEach(id => {
+      const course = electivesData.find(c => c.id === id);
+      if (course) {
+        totalCredits += course.credits;
+        const div = document.createElement('div');
+        div.className = 'registered-item';
+        div.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:2px; min-width:0;">
+            <span style="font-size:13px; font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${course.title}</span>
+            <span style="font-size:11px; color:var(--muted2);">${course.id} · ${course.credits} Credits</span>
+          </div>
+          <button class="btn-sm-bad" onclick="removeElective('${course.id}')" style="padding:4px 8px; font-size:11px;">Remove</button>
+        `;
+        cartContainer.appendChild(div);
+      }
+    });
+
+    if (registeredIds.length === 0) {
+      cartContainer.innerHTML = '<div style="padding:20px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; color:var(--muted2); font-size:13px;">No courses selected yet</div>';
+    }
+
+    // Update progress tracker
+    const creditsValueEl = document.getElementById('creditsValue');
+    const progressBar = document.getElementById('creditsProgressBar');
+    
+    if (creditsValueEl) creditsValueEl.textContent = `${totalCredits} / 6 Credits`;
+    if (progressBar) {
+      const percentage = (totalCredits / 6) * 100;
+      progressBar.style.width = `${percentage}%`;
+    }
+
+    // Toggle submit button: active only when exactly 6 credits selected
+    if (totalCredits === 6) {
+      submitBtn.removeAttribute('disabled');
+    } else {
+      submitBtn.setAttribute('disabled', 'true');
+    }
+  }
+
+  window.addElective = function(id) {
+    let currentCredits = registeredIds.reduce((sum, cid) => {
+      const course = electivesData.find(c => c.id === cid);
+      return sum + (course ? course.credits : 0);
+    }, 0);
+
+    const courseToAdd = electivesData.find(c => c.id === id);
+    if (courseToAdd) {
+      if (currentCredits + courseToAdd.credits > 6) {
+        alert("Credit Limit Exceeded! You can select a maximum of 6 credits (2 electives).");
+        return;
+      }
+      registeredIds.push(id);
+      localStorage.setItem('edupulse_registered_electives', JSON.stringify(registeredIds));
+      renderElectives();
+      renderCart();
+    }
+  };
+
+  window.removeElective = function(id) {
+    registeredIds = registeredIds.filter(cid => cid !== id);
+    localStorage.setItem('edupulse_registered_electives', JSON.stringify(registeredIds));
+    renderElectives();
+    renderCart();
+  };
+
+  if (submitBtn) {
+    submitBtn.addEventListener('click', () => {
+      alert("Success! Your course elective registration has been finalized and locked for Semester 6.");
+    });
+  }
+
+  // Initial load
+  renderElectives();
+  renderCart();
+</script>
+
+
+</body>
+</html>

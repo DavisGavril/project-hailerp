@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Settings</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+  .settings-wrap {
+    display: grid;
+    grid-template-columns: 1fr 2.5fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .settings-wrap {
+      grid-template-columns: 1fr;
+    }
+  }
+  .settings-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .settings-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .settings-tab-btn:hover {
+    background: #F4F6FB;
+    color: var(--navy);
+  }
+  .settings-tab-btn.active {
+    background: rgba(0, 56, 116, 0.08);
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .settings-tab-btn i {
+    width: 16px;
+    text-align: center;
+    font-size: 14px;
+  }
+  .settings-pane {
+    display: none;
+  }
+  .settings-pane.active {
+    display: block;
+  }
+  .toggle-switch-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .toggle-switch-wrapper:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Populated dynamically via JS based on role -->
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item active"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Account Settings</h1>
+        <span>Customize your profile preferences and system controls</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p>Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="notices.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">ST</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">User</span>
+              <span class="profile-role">Student</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">ST</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">User Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">user@institution.edu</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div class="settings-wrap">
+        <!-- Settings Side Menu -->
+        <div class="settings-menu">
+          <button class="settings-tab-btn active" data-pane="profilePaneBtn">
+            <i class="fa-solid fa-user"></i> Profile Details
+          </button>
+          <button class="settings-tab-btn" data-pane="securityPaneBtn">
+            <i class="fa-solid fa-shield-halved"></i> Security & Password
+          </button>
+          <button class="settings-tab-btn" data-pane="notifPaneBtn">
+            <i class="fa-solid fa-bell"></i> Notification Settings
+          </button>
+        </div>
+
+        <!-- Settings Content Card -->
+        <div class="panel" style="margin-bottom:0;">
+          <!-- Profile Details Pane -->
+          <div class="settings-pane active" id="profilePaneBtn">
+            <h3 style="font-size:16px; font-weight:600; color:var(--ink); margin-bottom:20px;">Profile Information</h3>
+            <form id="profileForm">
+              <div class="row">
+                <div class="col-md-6 form-group-custom">
+                  <label for="pName">Full Name</label>
+                  <input type="text" class="form-control-custom2" id="pName" readonly>
+                </div>
+                <div class="col-md-6 form-group-custom">
+                  <label for="pEmail">Institutional Email</label>
+                  <input type="email" class="form-control-custom2" id="pEmail" readonly>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 form-group-custom">
+                  <label for="pPhone">Contact Phone Number</label>
+                  <input type="text" class="form-control-custom2" id="pPhone" value="+91 98401 23456" required>
+                </div>
+                <div class="col-md-6 form-group-custom">
+                  <label for="pRole">ERP System Role</label>
+                  <input type="text" class="form-control-custom2" id="pRole" readonly>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 form-group-custom">
+                  <label id="pIdLabel">Registration Number / Employee ID</label>
+                  <input type="text" class="form-control-custom2" id="pId" readonly>
+                </div>
+              </div>
+              <div class="form-group-custom">
+                <label for="pAddr">Residential Address</label>
+                <input type="text" class="form-control-custom2" id="pAddr" value="C-4, Emerald Apartments, Adyar, Chennai - 600020">
+              </div>
+              <button type="submit" class="btn-navy" style="margin-top:8px;">
+                <i class="fa-solid fa-floppy-disk"></i> Save Profile Details
+              </button>
+            </form>
+          </div>
+
+          <!-- Security Pane -->
+          <div class="settings-pane" id="securityPaneBtn">
+            <h3 style="font-size:16px; font-weight:600; color:var(--ink); margin-bottom:20px;">Change Password</h3>
+            <form id="passwordForm">
+              <div class="form-group-custom">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" class="form-control-custom2" id="currentPassword" placeholder="••••••••" required>
+              </div>
+              <div class="form-group-custom">
+                <label for="newPassword">New Password</label>
+                <input type="password" class="form-control-custom2" id="newPassword" placeholder="Minimum 6 characters" minlength="6" required>
+              </div>
+              <div class="form-group-custom">
+                <label for="confirmPassword">Confirm New Password</label>
+                <input type="password" class="form-control-custom2" id="confirmPassword" placeholder="Re-type new password" minlength="6" required>
+              </div>
+              <button type="submit" class="btn-navy" style="margin-top:8px;">
+                <i class="fa-solid fa-key"></i> Update Password
+              </button>
+            </form>
+          </div>
+
+          <!-- Notification Pane -->
+          <div class="settings-pane" id="notifPaneBtn">
+            <h3 style="font-size:16px; font-weight:600; color:var(--ink); margin-bottom:20px;">Alert Preferences</h3>
+            
+            <div class="toggle-switch-wrapper">
+              <div>
+                <div style="font-size:13.5px; font-weight:600; color:var(--ink);">Academic Email Notices</div>
+                <div style="font-size:11.5px; color:var(--muted2); margin-top:2px;">Receive announcements and bulletins via institutional inbox.</div>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="emailNotifSwitch" checked>
+              </div>
+            </div>
+
+            <div class="toggle-switch-wrapper">
+              <div>
+                <div style="font-size:13.5px; font-weight:600; color:var(--ink);">SMS / Mobile Notifications</div>
+                <div style="font-size:11.5px; color:var(--muted2); margin-top:2px;">Get immediate text alerts on emergency schedules or fees due.</div>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="smsNotifSwitch">
+              </div>
+            </div>
+
+            <div class="toggle-switch-wrapper">
+              <div>
+                <div style="font-size:13.5px; font-weight:600; color:var(--ink);">Grade & Assessment Updates</div>
+                <div style="font-size:11.5px; color:var(--muted2); margin-top:2px;">Alert immediately when continuous internal assessment marks are published.</div>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="gradeNotifSwitch" checked>
+              </div>
+            </div>
+            
+            <button class="btn-navy" id="saveNotifBtn" style="margin-top:24px;">
+              <i class="fa-solid fa-floppy-disk"></i> Save Alert Preferences
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+<script>
+  // Settings Tabs switching
+  const tabs = document.querySelectorAll('.settings-tab-btn');
+  const panes = document.querySelectorAll('.settings-pane');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      panes.forEach(p => p.classList.remove('active'));
+
+      tab.classList.add('active');
+      const paneId = tab.dataset.pane;
+      document.getElementById(paneId).classList.add('active');
+    });
+  });
+
+  // Form submits (mock alerts)
+  document.getElementById('profileForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert("Profile details saved successfully!");
+  });
+
+  document.getElementById('passwordForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const np = document.getElementById('newPassword').value;
+    const cp = document.getElementById('confirmPassword').value;
+    if (np !== cp) {
+      alert("New password and confirm password do not match!");
+      return;
+    }
+    alert("Password updated successfully!");
+    document.getElementById('passwordForm').reset();
+  });
+
+  document.getElementById('saveNotifBtn').addEventListener('click', () => {
+    alert("Alert preferences updated!");
+  });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse ERP | Grades</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+  :root{
+    --navy:#003874;
+    --navy-light:#1A4F95;
+    --teal:#006A61;
+    --bg:#F9F9FF;
+    --ink:#1A1C20;
+    --muted:#424751;
+    --muted2:#737782;
+    --border:#E2E5EC;
+    --sidebar-w:260px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    margin:0;
+  }
+
+  .dash-wrap{ display:flex; min-height:100vh; }
+
+  .sidebar{
+    width:var(--sidebar-w);
+    min-width:var(--sidebar-w);
+    background:var(--navy);
+    padding:28px 20px;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+    transition:transform .25s ease;
+    z-index:100;
+  }
+
+  .sidebar-logo{ display:flex; align-items:center; gap:10px; padding:0 8px; margin-bottom:36px; }
+  .sidebar-logo i{ color:#fff; font-size:24px; }
+  .sidebar-logo span{ color:#fff; font-size:18px; font-weight:600; letter-spacing:-0.3px; }
+
+  .sidebar-nav{ display:flex; flex-direction:column; gap:4px; flex:1; }
+
+  .nav-item{
+    display:flex; align-items:center; gap:12px; padding:11px 14px;
+    border-radius:8px; color:rgba(255,255,255,0.65); text-decoration:none;
+    font-size:14px; font-weight:500; transition:background .15s ease, color .15s ease;
+  }
+  .nav-item i{ width:18px; text-align:center; font-size:15px; }
+  .nav-item:hover{ background:rgba(255,255,255,0.06); color:#fff; }
+  .nav-item.active{ background:var(--navy-light); color:#A3C3FF; font-weight:600; }
+
+  .sidebar-footer{
+    display:flex; flex-direction:column; gap:4px;
+    border-top:1px solid rgba(255,255,255,0.1); padding-top:16px;
+  }
+  .nav-item.logout:hover{ color:#FCA5A5; }
+
+  .main-area{ flex:1; min-width:0; display:flex; flex-direction:column; height:100vh; }
+
+  .topbar{
+    display:flex; align-items:center; gap:16px; padding:18px 32px;
+    background:rgba(255,255,255,0.7); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10;
+  }
+
+  .menu-toggle{ display:none; background:none; border:none; font-size:18px; color:var(--navy); }
+
+  .topbar-title h1{ font-size:20px; font-weight:600; letter-spacing:-0.3px; margin:0; color:var(--ink); }
+  .topbar-title span{ font-size:13px; color:var(--muted2); }
+
+  .topbar-actions{ margin-left:auto; display:flex; align-items:center; gap:20px; }
+
+  .icon-btn{
+    position:relative; background:#fff; border:1px solid var(--border);
+    width:40px; height:40px; border-radius:10px; color:var(--muted); font-size:16px;
+  }
+  .badge-dot{
+    position:absolute; top:8px; right:9px; width:7px; height:7px;
+    border-radius:50%; background:#E11D48; border:1.5px solid #fff;
+  }
+
+  .profile-chip{
+    display:flex; align-items:center; gap:10px; padding:6px 12px 6px 6px;
+    border-radius:10px; border:1px solid var(--border); background:#fff; cursor:pointer;
+  }
+  .avatar{
+    width:32px; height:32px; border-radius:50%; background:var(--navy); color:#fff;
+    font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  }
+  .profile-info{ display:flex; flex-direction:column; line-height:1.2; }
+  .profile-name{ font-size:13px; font-weight:600; color:var(--ink); }
+  .profile-role{ font-size:11px; color:var(--muted2); }
+  .profile-chip > i{ font-size:11px; color:var(--muted2); }
+
+  .content-scroll{ flex:1; overflow-y:auto; padding:28px 32px 48px; }
+
+  .stats-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:18px; margin-bottom:24px; }
+
+  .stat-card{
+    background:#fff; border:1px solid var(--border); border-radius:14px;
+    padding:20px; display:flex; gap:14px; align-items:flex-start;
+  }
+  .stat-icon{
+    width:42px; height:42px; border-radius:10px; display:flex;
+    align-items:center; justify-content:center; font-size:17px; flex-shrink:0;
+  }
+  .stat-body{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .stat-label{ font-size:12px; color:var(--muted2); font-weight:500; }
+  .stat-value{ font-size:22px; font-weight:700; letter-spacing:-0.4px; color:var(--ink); }
+  .stat-trend{ font-size:11.5px; color:var(--muted2); }
+  .stat-trend.up{ color:var(--teal); font-weight:600; }
+  .stat-trend.ok{ color:var(--teal); }
+  .stat-trend.warn{ color:#D97706; font-weight:600; }
+  .stat-trend.bad{ color:#DC2626; font-weight:600; }
+
+  .panel{ background:#fff; border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:24px; }
+  .panel-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; gap:12px; flex-wrap:wrap; }
+  .panel-header h3{ font-size:15px; font-weight:600; margin:0; color:var(--ink); }
+  .panel-link{ font-size:12.5px; font-weight:600; color:var(--navy); text-decoration:none; }
+
+  /* Data table */
+  .data-table{ width:100%; border-collapse:collapse; }
+  .data-table th{
+    text-align:left; font-size:11.5px; font-weight:600; color:var(--muted2);
+    text-transform:uppercase; letter-spacing:0.4px; padding:10px 12px;
+    border-bottom:1px solid var(--border);
+  }
+  .data-table td{
+    font-size:13.5px; color:var(--ink); padding:14px 12px;
+    border-bottom:1px solid var(--border); vertical-align:middle;
+  }
+  .data-table tr:last-child td{ border-bottom:none; }
+  .data-table tbody tr:hover{ background:#FAFAFD; }
+
+  .pill{ font-size:11px; font-weight:600; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+  .pill-good{ background:rgba(0,106,97,0.1); color:var(--teal); }
+  .pill-warn{ background:rgba(217,119,6,0.1); color:#D97706; }
+
+  @media (max-width: 1100px){
+    .stats-grid{ grid-template-columns:repeat(2, 1fr); }
+  }
+
+  @media (max-width: 900px){
+    .sidebar{ position:fixed; left:0; top:0; transform:translateX(-100%); box-shadow:0 0 24px rgba(0,0,0,0.2); }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-toggle{ display:block; }
+    .profile-info{ display:none; }
+  }
+
+  @media (max-width: 560px){
+    .stats-grid{ grid-template-columns:1fr; }
+    .topbar{ padding:16px; }
+    .content-scroll{ padding:20px 16px 40px; }
+  }
+
+</style>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<div class="dash-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>EduPulse ERP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="student-dashboard.html" class="nav-item">
+        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+      </a>
+      <a href="my-courses.html" class="nav-item">
+        <i class="fa-solid fa-book-open"></i><span>My Courses</span>
+      </a>
+      <a href="attendance.html" class="nav-item">
+        <i class="fa-solid fa-clipboard-check"></i><span>Attendance</span>
+      </a>
+      <a href="grades.html" class="nav-item active">
+        <i class="fa-solid fa-chart-line"></i><span>Grades</span>
+      </a>
+      <a href="timetable.html" class="nav-item">
+        <i class="fa-solid fa-calendar-days"></i><span>Timetable</span>
+      </a>
+      <a href="fees.html" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Fees</span>
+      </a>
+      <a href="library.html" class="nav-item">
+        <i class="fa-solid fa-book"></i><span>Library</span>
+      </a>
+      <a href="student-leaves.html" class="nav-item">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Leave Requests</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+      <a href="index.html" class="nav-item logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></a>
+    </div>
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="topbar-title">
+        <h1>Grades</h1>
+        <span>CGPA 8.74 · Semester 5 in progress</span>
+      </div>
+
+            <div class="topbar-actions">
+        <!-- Notification Dropdown -->
+        <div class="dropdown-custom">
+          <button class="icon-btn" id="bellToggle">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge-dot" id="bellBadge"></span>
+          </button>
+          <div class="dropdown-menu-custom notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header-custom">
+              <span>Notifications</span>
+              <button class="clear-all-btn" id="clearNotifications">Clear All</button>
+            </div>
+            <div class="notification-list-custom" id="notificationList">
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p id="notifText1">Semester fee payment deadline extended to 20 Jul 2026.</p>
+                  <span>2 hours ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom unread">
+                <div class="notif-bullet"></div>
+                <div class="notif-content-custom">
+                  <p id="notifText2">Internal assessment marks for CS502 published.</p>
+                  <span>2 days ago</span>
+                </div>
+              </div>
+              <div class="notification-item-custom">
+                <div class="notif-content-custom">
+                  <p>Library book "Clean Code" is due for return.</p>
+                  <span>3 days ago</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer-custom">
+              <a href="notices.html" class="view-all-link" id="noticesViewAll">View All Notices</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-custom">
+          <div class="profile-chip" id="profileToggle">
+            <div class="avatar" id="avatarInitials">ST</div>
+            <div class="profile-info">
+              <span class="profile-name" id="profileName">Student</span>
+              <span class="profile-role">B.Tech IT · III Year</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu-custom profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <div class="avatar" style="width:40px; height:40px; font-size:14px;" id="dropdownAvatarInitials">ST</div>
+              <div class="profile-dropdown-info">
+                <span class="profile-dropdown-name" id="dropdownProfileName">Student Name</span>
+                <span class="profile-dropdown-email" id="dropdownProfileEmail">student@institution.edu</span>
+                <span class="profile-dropdown-id" id="dropdownProfileId" style="font-size:10.5px; color:var(--muted2); font-weight:600; margin-top:2px;">ID: 731122205012</span>
+              </div>
+            </div>
+            <div class="dropdown-divider-custom"></div>
+            <a href="settings.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-user-gear"></i> Account Settings
+            </a>
+            <a href="contact-support.html" class="dropdown-item-custom">
+              <i class="fa-solid fa-circle-question"></i> Help & Support
+            </a>
+            <div class="dropdown-divider-custom"></div>
+            <a href="index.html" class="dropdown-item-custom logout text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,56,116,0.1); color:var(--navy);">
+            <i class="fa-solid fa-chart-simple"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Current CGPA</span>
+            <span class="stat-value">8.74</span>
+            <span class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> 0.12 from last sem</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,106,97,0.1); color:var(--teal);">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Best Semester GPA</span>
+            <span class="stat-value">9.02</span>
+            <span class="stat-trend">Semester 4</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(190,24,93,0.1); color:#BE185D;">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Credits Earned</span>
+            <span class="stat-value">98 / 160</span>
+            <span class="stat-trend">Total programme</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(217,119,6,0.1); color:#D97706;">
+            <i class="fa-solid fa-hourglass-half"></i>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Result Awaited</span>
+            <span class="stat-value">1</span>
+            <span class="stat-trend warn">Semester 5, in progress</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h3>Semester 5 — In Progress Grades</h3>
+          <a href="gradecard.html" class="panel-link">View grade card</a>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Code</th>
+              <th>Credits</th>
+              <th>Internal Marks</th>
+              <th>Grade (Projected)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Cloud Computing</td><td>CS501</td><td>4</td><td>46 / 50</td><td><span class="pill pill-good">A+</span></td></tr>
+            <tr><td>Machine Learning</td><td>CS502</td><td>4</td><td>41 / 50</td><td><span class="pill pill-good">A</span></td></tr>
+            <tr><td>Prompt Engineering</td><td>CS503</td><td>3</td><td>44 / 50</td><td><span class="pill pill-good">A+</span></td></tr>
+            <tr><td>Software Architecture</td><td>CS504</td><td>3</td><td>37 / 50</td><td><span class="pill pill-warn">B+</span></td></tr>
+            <tr><td>Computer Networks</td><td>CS505</td><td>4</td><td>34 / 50</td><td><span class="pill pill-warn">B</span></td></tr>
+            <tr><td>Professional Ethics</td><td>CS506</td><td>2</td><td>47 / 50</td><td><span class="pill pill-good">A+</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h3>Semester-wise GPA History</h3>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr><th>Semester</th><th>Credits</th><th>SGPA</th><th>CGPA (Cumulative)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Semester 1</td><td>22</td><td>8.40</td><td>8.40</td></tr>
+            <tr><td>Semester 2</td><td>24</td><td>8.55</td><td>8.48</td></tr>
+            <tr><td>Semester 3</td><td>26</td><td>8.71</td><td>8.55</td></tr>
+            <tr><td>Semester 4</td><td>26</td><td>9.02</td><td>8.67</td></tr>
+            <tr><td>Semester 5</td><td>20</td><td style="color:var(--muted2);">In progress</td><td>8.74*</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>
