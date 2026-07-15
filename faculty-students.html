@@ -559,28 +559,217 @@
   </div>
 </div>
 
+<!-- Edit Academics Modal -->
+<div class="modal fade" id="editAcademicsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="border-radius:14px; border:none; box-shadow:0 12px 30px rgba(0,0,0,0.15);">
+      <div class="modal-header" style="border-bottom:1px solid var(--border); padding: 20px 24px;">
+        <h5 class="modal-title" style="font-size:16px; font-weight:600; color:var(--ink);">Edit Student Academic Records</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <form id="editAcademicsForm">
+          <input type="hidden" id="editStudentEmail">
+          
+          <div class="row mb-3">
+            <div class="col-md-4 form-group-custom">
+              <label for="editCgpa" style="font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block;">CGPA</label>
+              <input type="text" class="form-control" id="editCgpa" placeholder="e.g. 8.92" style="border-radius:8px; border:1px solid var(--border); padding:10px; font-size:13.5px; width: 100%;">
+            </div>
+            <div class="col-md-4 form-group-custom">
+              <label for="editFeesDue" style="font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block;">Fees Due (₹)</label>
+              <input type="number" class="form-control" id="editFeesDue" placeholder="e.g. 12500" style="border-radius:8px; border:1px solid var(--border); padding:10px; font-size:13.5px; width: 100%;">
+            </div>
+            <div class="col-md-4 form-group-custom">
+              <label for="editFeesStatus" style="font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block;">Fees Status</label>
+              <select class="form-select" id="editFeesStatus" style="border-radius:8px; border:1px solid var(--border); padding:10px; font-size:13.5px; width: 100%;">
+                <option value="Pending">Pending</option>
+                <option value="Paid">Paid</option>
+              </select>
+            </div>
+          </div>
+          
+          <h4 style="font-size:14px; font-weight:600; color:var(--ink); margin-top:20px; margin-bottom:12px;">Subject-wise Attendance</h4>
+          <div id="attendanceEditContainer" class="row g-3">
+            <!-- Populated dynamically via JS -->
+          </div>
+          
+          <button type="submit" class="btn-navy w-100 justify-content-center mt-4" style="height:44px; border:none; display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save Academic Details
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="dashboard.js"></script>
 <script>
-  // Attendance toggle buttons (visual only)
-  document.querySelectorAll('.att-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const row = btn.closest('.attendance-toggle');
-      row.querySelectorAll('.att-btn').forEach(b => b.classList.remove('present','absent'));
-      btn.classList.add(btn.dataset.state);
+  const tableBody = document.querySelector('.data-table tbody');
+  const searchInput = document.querySelector('.search-bar input');
+  let searchQuery = '';
+  let studentsData = [];
+
+  const SUBJECTS = [
+    "Cloud Computing",
+    "Machine Learning",
+    "Prompt Engineering",
+    "Software Architecture",
+    "Computer Networks",
+    "Professional Ethics"
+  ];
+
+  async function loadStudents() {
+    const apiBase = window.location.origin.startsWith('file://') || window.location.origin === 'null' ? 'http://localhost:8000' : window.location.origin;
+    try {
+      const response = await fetch(`${apiBase}/api/faculty/students?email=${encodeURIComponent(emailParam)}`);
+      studentsData = await response.json();
+      renderStudents();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function getOverallAttendancePercent(attendance) {
+    let totalHeld = 0;
+    let totalAttended = 0;
+    if (attendance) {
+      Object.keys(attendance).forEach(sub => {
+        totalHeld += attendance[sub].held || 0;
+        totalAttended += attendance[sub].attended || 0;
+      });
+    }
+    if (totalHeld === 0) return 0;
+    return Math.round((totalAttended / totalHeld) * 100);
+  }
+
+  function renderStudents() {
+    tableBody.innerHTML = '';
+    const filtered = studentsData.filter(s => {
+      return (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+             (s.reg_id || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+             (s.dept || '').toLowerCase().includes(searchQuery.toLowerCase());
     });
+
+    filtered.forEach(s => {
+      const initials = s.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+      const attendancePercent = getOverallAttendancePercent(s.attendance);
+      let pillClass = 'pill-good';
+      if (attendancePercent < 75) pillClass = 'pill-bad';
+      else if (attendancePercent < 85) pillClass = 'pill-warn';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${s.reg_id}</td>
+        <td>
+          <div class="student-row">
+            <div class="student-avatar">${initials}</div>
+            <div>${s.name}</div>
+          </div>
+        </td>
+        <td><span class="pill ${pillClass}">${attendancePercent}%</span></td>
+        <td>${s.cgpa || 'Not Updated'}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-navy py-1 px-2" style="font-size: 12px; border-radius:6px; border:1px solid var(--border);" onclick="openEditModal('${s.email}')">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Academics
+          </button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    if (filtered.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--muted2);">No students found in your department.</td></tr>';
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderStudents();
+    });
+  }
+
+  const editModal = new bootstrap.Modal(document.getElementById('editAcademicsModal'));
+
+  window.openEditModal = function(email) {
+    const student = studentsData.find(s => s.email === email);
+    if (!student) return;
+
+    document.getElementById('editStudentEmail').value = student.email;
+    document.getElementById('editCgpa').value = student.cgpa || '';
+    document.getElementById('editFeesDue').value = student.fees_due !== undefined ? student.fees_due : '';
+    document.getElementById('editFeesStatus').value = student.fees_status || 'Pending';
+
+    const container = document.getElementById('attendanceEditContainer');
+    container.innerHTML = '';
+    
+    const att = student.attendance || {};
+
+    SUBJECTS.forEach(sub => {
+      const subAtt = att[sub] || { attended: 0, held: 0 };
+      const div = document.createElement('div');
+      div.className = 'col-md-6';
+      div.innerHTML = `
+        <div style="border: 1px solid var(--border); border-radius:8px; padding:12px;">
+          <h5 style="font-size:12px; font-weight:600; color:var(--ink); margin-bottom:10px;">${sub}</h5>
+          <div class="row g-2">
+            <div class="col-6">
+              <label style="font-size:10px; color:var(--muted2);">Attended</label>
+              <input type="number" class="form-control form-control-sm att-attended" data-subject="${sub}" value="${subAtt.attended}" style="border-radius:6px; font-size:12px;">
+            </div>
+            <div class="col-6">
+              <label style="font-size:10px; color:var(--muted2);">Classes Held</label>
+              <input type="number" class="form-control form-control-sm att-held" data-subject="${sub}" value="${subAtt.held}" style="border-radius:6px; font-size:12px;">
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    editModal.show();
+  };
+
+  document.getElementById('editAcademicsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('editStudentEmail').value;
+    const cgpa = document.getElementById('editCgpa').value.trim();
+    const fees_due = document.getElementById('editFeesDue').value.trim();
+    const fees_status = document.getElementById('editFeesStatus').value;
+
+    const attendance = {};
+    document.querySelectorAll('#attendanceEditContainer .att-attended').forEach(el => {
+      const sub = el.dataset.subject;
+      const attended = parseInt(el.value) || 0;
+      const heldInput = document.querySelector(`#attendanceEditContainer .att-held[data-subject="${sub}"]`);
+      const held = parseInt(heldInput ? heldInput.value : 0) || 0;
+      attendance[sub] = { attended, held };
+    });
+
+    const apiBase = window.location.origin.startsWith('file://') || window.location.origin === 'null' ? 'http://localhost:8000' : window.location.origin;
+    try {
+      const res = await fetch(`${apiBase}/api/student/academics/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, cgpa, fees_due, fees_status, attendance })
+      });
+      if (res.ok) {
+        alert("Student academic records updated successfully!");
+        editModal.hide();
+        loadStudents();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to update academics");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error updating records.");
+    }
   });
 
-  // Leave approve/reject buttons (visual only)
-  document.querySelectorAll('.btn-sm-good, .btn-sm-bad').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const card = btn.closest('.leave-card');
-      const label = btn.classList.contains('btn-sm-good') ? 'Approved' : 'Rejected';
-      const color = btn.classList.contains('btn-sm-good') ? 'pill-good' : 'pill-bad';
-      const actions = card.querySelector('.leave-actions');
-      actions.innerHTML = '<span class="pill ' + color + '">' + label + '</span>';
-    });
-  });
+  loadStudents();
 </script>
 
 </body>

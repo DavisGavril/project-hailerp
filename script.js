@@ -185,9 +185,15 @@ if (registerForm) {
     const email = document.getElementById('regEmail').value.trim();
     const role = document.getElementById('regRole').value;
     const name = document.getElementById('regName').value.trim();
-    const dept = document.getElementById('regDept').value;
     const password = document.getElementById('regPassword').value;
     const regId = document.getElementById('regId').value.trim();
+
+    const checkedDepts = Array.from(document.querySelectorAll('.dept-checkbox:checked')).map(cb => cb.value);
+    if (checkedDepts.length === 0) {
+      alert("Please select at least one department.");
+      return;
+    }
+    const dept = checkedDepts.join(', ');
 
     try {
       const { response, data } = await submitToBackend('/api/signup', {
@@ -210,18 +216,7 @@ if (registerForm) {
         modalInstance.hide();
       }
 
-      alert(`Account Registered Successfully!\n\nYour Unique ID: ${regId}\nPassword: ${password}\n\nRedirecting to Dashboard...`);
-
-      const dashboardByRole = {
-        student: 'student-dashboard.html',
-        faculty: 'faculty-dashboard.html',
-        admin: 'admin-dashboard.html'
-      };
-      const target = dashboardByRole[role] || 'student-dashboard.html';
-
-      setTimeout(() => {
-        window.location.href = `${target}?email=${encodeURIComponent(email)}&role=${role}`;
-      }, 500);
+      alert(`Account Registered Successfully!\n\nYour profile has been submitted for administrator approval. You will be able to log in once the admin approves your account.`);
     } catch (error) {
       alert('Unable to reach the backend server. Start it with python server.py.');
     }

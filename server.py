@@ -34,6 +34,8 @@ def init_db():
     db.users.create_index("email", unique=True)
     db.users.create_index("reg_id", unique=True)
     db.login_logs.create_index("logged_at")
+    # Migration: Set status="approved" for existing users
+    db.users.update_many({"status": {"$exists": False}}, {"$set": {"status": "approved"}})
     seed_default_users()
 
 
@@ -46,6 +48,18 @@ def seed_default_users():
             "name": "Davis Gavril",
             "dept": "IT",
             "reg_id": "731122205012",
+            "status": "approved",
+            "cgpa": "8.74",
+            "fees_due": 12500,
+            "fees_status": "Pending",
+            "attendance": {
+                "Cloud Computing": {"attended": 38, "held": 40},
+                "Machine Learning": {"attended": 34, "held": 38},
+                "Prompt Engineering": {"attended": 33, "held": 36},
+                "Software Architecture": {"attended": 33, "held": 40},
+                "Computer Networks": {"attended": 29, "held": 39},
+                "Professional Ethics": {"attended": 36, "held": 39}
+            }
         },
         {
             "email": "karthik.s@institution.edu",
@@ -54,6 +68,18 @@ def seed_default_users():
             "name": "Karthik S",
             "dept": "IT",
             "reg_id": "731122205019",
+            "status": "approved",
+            "cgpa": "6.85",
+            "fees_due": 0,
+            "fees_status": "Paid",
+            "attendance": {
+                "Cloud Computing": {"attended": 35, "held": 40},
+                "Machine Learning": {"attended": 30, "held": 38},
+                "Prompt Engineering": {"attended": 32, "held": 36},
+                "Software Architecture": {"attended": 31, "held": 40},
+                "Computer Networks": {"attended": 26, "held": 39},
+                "Professional Ethics": {"attended": 34, "held": 39}
+            }
         },
         {
             "email": "prof.iyer@institution.edu",
@@ -62,6 +88,7 @@ def seed_default_users():
             "name": "Prof. S. Iyer",
             "dept": "CSE",
             "reg_id": "EMP-2024-802",
+            "status": "approved"
         },
         {
             "email": "prof.menon@institution.edu",
@@ -70,6 +97,7 @@ def seed_default_users():
             "name": "Dr. R. Menon",
             "dept": "IT",
             "reg_id": "EMP-2024-704",
+            "status": "approved"
         },
         {
             "email": "admin@institution.edu",
@@ -78,23 +106,31 @@ def seed_default_users():
             "name": "System Admin",
             "dept": "Admin Office",
             "reg_id": "EMP-2022-001",
+            "status": "approved"
         },
     ]
 
     db = get_db()
     for user in default_users:
+        update_doc = {
+            "email": user["email"].lower(),
+            "password_hash": hash_password(user["password"]),
+            "role": user["role"],
+            "name": user["name"],
+            "dept": user["dept"],
+            "reg_id": user["reg_id"],
+            "status": user["status"],
+        }
+        if user["role"] == "student":
+            update_doc.update({
+                "cgpa": user["cgpa"],
+                "fees_due": user["fees_due"],
+                "fees_status": user["fees_status"],
+                "attendance": user["attendance"]
+            })
         db.users.update_one(
             {"email": user["email"].lower()},
-            {
-                "$setOnInsert": {
-                    "email": user["email"].lower(),
-                    "password_hash": hash_password(user["password"]),
-                    "role": user["role"],
-                    "name": user["name"],
-                    "dept": user["dept"],
-                    "reg_id": user["reg_id"],
-                }
-            },
+            {"$setOnInsert": update_doc},
             upsert=True,
         )
 
@@ -114,6 +150,9 @@ def fetch_user(email):
         "name": user["name"],
         "dept": user["dept"],
         "reg_id": user["reg_id"],
+        "status": user.get("status", "pending"),
+        "phone": user.get("phone", ""),
+        "address": user.get("address", "")
     }
 
 
@@ -127,13 +166,7 @@ def verify_credentials(email, password, role):
         return None
     if user.get("role", "").lower() != role.lower():
         return None
-    return {
-        "email": user["email"],
-        "role": user["role"],
-        "name": user["name"],
-        "dept": user["dept"],
-        "reg_id": user["reg_id"],
-    }
+    return user
 
 
 def record_login(user):
@@ -147,6 +180,7 @@ def record_login(user):
             "logged_at": datetime.now(timezone.utc).isoformat(),
         }
     )
+
 
 
 class EduPulseHandler(BaseHTTPRequestHandler):
@@ -178,6 +212,38 @@ class EduPulseHandler(BaseHTTPRequestHandler):
                 return
             self._send_json(user)
             return
+        if path == "/api/student/academics":
+            query = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            email = (query.get("email", [""])[0] or "").strip().lower()
+            db = get_db()
+            user = db.users.find_one({"email": email})
+            if not user:
+                self._send_json({"error": "User not found"}, status=404)
+                return
+            self._send_json({
+                "cgpa": user.get("cgpa", ""),
+                "fees_due": user.get("fees_due", 0),
+                "fees_status": user.get("fees_status", "Pending Update"),
+                "attendance": user.get("attendance", {})
+            })
+            return
+        if path == "/api/faculty/students":
+            query = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            email = (query.get("email", [""])[0] or "").strip().lower()
+            db = get_db()
+            faculty = db.users.find_one({"email": email})
+            if not faculty:
+                self._send_json({"error": "Faculty not found"}, status=404)
+                return
+            fac_depts = [d.strip().lower() for d in faculty.get("dept", "").split(",") if d.strip()]
+            students = []
+            all_users = list(db.users.find({"role": "student"}, {"_id": 0, "password_hash": 0}))
+            for u in all_users:
+                u_depts = [d.strip().lower() for d in u.get("dept", "").split(",") if d.strip()]
+                if any(d in fac_depts for d in u_depts) or len(fac_depts) == 0:
+                    students.append(u)
+            self._send_json(students)
+            return
 
         if path in ["/", ""]:
             path = "/index.html"
@@ -195,6 +261,7 @@ class EduPulseHandler(BaseHTTPRequestHandler):
 
         self._send_json({"error": "Not found"}, status=404)
 
+
     def do_POST(self):
         path = urllib.parse.urlparse(self.path).path
         content_length = int(self.headers.get("Content-Length", 0))
@@ -210,6 +277,61 @@ class EduPulseHandler(BaseHTTPRequestHandler):
             self._handle_signup(payload)
         elif path == "/api/login":
             self._handle_login(payload)
+        elif path == "/api/users/action":
+            email = payload.get("email", "").strip().lower()
+            action = payload.get("action", "").strip().lower()
+            if not email or action not in {"approve", "reject"}:
+                self._send_json({"error": "Invalid parameters"}, status=400)
+                return
+            db = get_db()
+            status_val = "approved" if action == "approve" else "rejected"
+            res = db.users.update_one({"email": email}, {"$set": {"status": status_val}})
+            if res.matched_count == 0:
+                self._send_json({"error": "User not found"}, status=404)
+                return
+            self._send_json({"message": f"User status updated to {status_val} successfully."})
+        elif path == "/api/profile/update":
+            email = payload.get("email", "").strip().lower()
+            phone = payload.get("phone", "").strip()
+            address = payload.get("address", "").strip()
+            role = payload.get("role", "").strip()
+            if not email:
+                self._send_json({"error": "Email is required"}, status=400)
+                return
+            db = get_db()
+            update_fields = {}
+            if phone: update_fields["phone"] = phone
+            if address: update_fields["address"] = address
+            if role: update_fields["role"] = role.lower()
+            res = db.users.update_one({"email": email}, {"$set": update_fields})
+            if res.matched_count == 0:
+                self._send_json({"error": "User not found"}, status=404)
+                return
+            self._send_json({"message": "Profile updated successfully."})
+        elif path == "/api/student/academics/update":
+            email = payload.get("email", "").strip().lower()
+            cgpa = payload.get("cgpa", "").strip()
+            fees_due = payload.get("fees_due")
+            fees_status = payload.get("fees_status", "").strip()
+            attendance = payload.get("attendance", {})
+            if not email:
+                self._send_json({"error": "Email is required"}, status=400)
+                return
+            db = get_db()
+            update_fields = {}
+            if cgpa is not None: update_fields["cgpa"] = cgpa
+            if fees_due is not None:
+                try:
+                    update_fields["fees_due"] = int(fees_due)
+                except (ValueError, TypeError):
+                    update_fields["fees_due"] = fees_due
+            if fees_status: update_fields["fees_status"] = fees_status
+            if attendance: update_fields["attendance"] = attendance
+            res = db.users.update_one({"email": email}, {"$set": update_fields})
+            if res.matched_count == 0:
+                self._send_json({"error": "User not found"}, status=404)
+                return
+            self._send_json({"message": "Academics updated successfully."})
         else:
             self._send_json({"error": "Not found"}, status=404)
 
@@ -243,23 +365,36 @@ class EduPulseHandler(BaseHTTPRequestHandler):
 
         db = get_db()
         try:
-            db.users.insert_one(
-                {
-                    "email": email,
-                    "password_hash": hash_password(password),
-                    "role": role,
-                    "name": name,
-                    "dept": dept,
-                    "reg_id": reg_id,
-                }
-            )
+            user_doc = {
+                "email": email,
+                "password_hash": hash_password(password),
+                "role": role,
+                "name": name,
+                "dept": dept,
+                "reg_id": reg_id,
+                "status": "pending"
+            }
+            if role == "student":
+                user_doc.update({
+                    "cgpa": "",
+                    "fees_due": 0,
+                    "fees_status": "Pending Update",
+                    "attendance": {
+                        "Cloud Computing": {"attended": 0, "held": 0},
+                        "Machine Learning": {"attended": 0, "held": 0},
+                        "Prompt Engineering": {"attended": 0, "held": 0},
+                        "Software Architecture": {"attended": 0, "held": 0},
+                        "Computer Networks": {"attended": 0, "held": 0},
+                        "Professional Ethics": {"attended": 0, "held": 0}
+                    }
+                })
+            db.users.insert_one(user_doc)
         except DuplicateKeyError:
             self._send_json({"error": "An account with this email already exists"}, status=409)
             return
 
         user = {"email": email, "role": role, "name": name, "dept": dept, "reg_id": reg_id}
-        record_login(user)
-        self._send_json({"message": "Account created successfully", "user": user})
+        self._send_json({"message": "Account created successfully. Pending administrator approval.", "user": user})
 
     def _handle_login(self, payload):
         email = (payload.get("email") or "").strip().lower()
@@ -281,8 +416,23 @@ class EduPulseHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": "No account found"}, status=404)
             return
 
+        status = user.get("status", "pending")
+        if status == "pending":
+            self._send_json({"error": "Your account is pending administrator approval."}, status=403)
+            return
+        elif status == "rejected":
+            self._send_json({"error": "Your registration request was rejected by the administrator."}, status=403)
+            return
+
         record_login(user)
-        self._send_json({"message": "Login successful", "user": user})
+        self._send_json({"message": "Login successful", "user": {
+            "email": user["email"],
+            "role": user["role"],
+            "name": user["name"],
+            "dept": user["dept"],
+            "reg_id": user["reg_id"]
+        }})
+
 
     def _serve_file(self, file_path):
         if file_path.suffix.lower() in {".html", ".css", ".js", ".json", ".txt", ".svg", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".webp"}:

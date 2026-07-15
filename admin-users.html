@@ -19,6 +19,11 @@
     margin-bottom: 20px;
     flex-wrap: wrap;
   }
+  .pill{ font-size:11px; font-weight:600; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+  .pill-good{ background:rgba(0,106,97,0.1); color:var(--teal); }
+  .pill-warn{ background:rgba(217,119,6,0.1); color:#D97706; }
+  .pill-bad{ background:rgba(220,38,38,0.1); color:#DC2626; }
+  .pill-neutral{ background:#EDEDF4; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -331,6 +336,27 @@
     }
   }
 
+  window.handleUserAction = async function(email, action) {
+    const apiBase = window.location.origin.startsWith('file://') || window.location.origin === 'null' ? 'http://localhost:8000' : window.location.origin;
+    try {
+      const res = await fetch(`${apiBase}/api/users/action`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, action })
+      });
+      if (res.ok) {
+        alert(`User successfully ${action === 'approve' ? 'approved' : 'rejected'}.`);
+        renderUsers();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to update user status");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Network error updating user status.");
+    }
+  };
+
   function saveUsers(users) {
     localStorage.setItem('edupulse_users', JSON.stringify(users));
   }
@@ -352,8 +378,28 @@
 
     filtered.forEach((u) => {
       const tr = document.createElement('tr');
-      const pillClass = 'pill-good';
-      const actionLabel = 'Active';
+      
+      let pillClass = 'pill-warn';
+      let actionLabel = 'Pending';
+      let actionsHTML = '';
+      
+      const status = u.status || 'pending';
+      if (status === 'approved') {
+        pillClass = 'pill-good';
+        actionLabel = 'Approved';
+        actionsHTML = `<button class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size:11px; border-radius:6px;" onclick="handleUserAction('${u.email}', 'reject')">Suspend</button>`;
+      } else if (status === 'rejected') {
+        pillClass = 'pill-bad';
+        actionLabel = 'Rejected';
+        actionsHTML = `<button class="btn btn-sm btn-outline-success py-1 px-2" style="font-size:11px; border-radius:6px;" onclick="handleUserAction('${u.email}', 'approve')">Approve</button>`;
+      } else {
+        pillClass = 'pill-warn';
+        actionLabel = 'Pending';
+        actionsHTML = `
+          <button class="btn btn-sm btn-success py-1 px-2 me-1" style="font-size:11px; border-radius:6px; background-color: var(--teal); border:none;" onclick="handleUserAction('${u.email}', 'approve')">Approve</button>
+          <button class="btn btn-sm btn-danger py-1 px-2" style="font-size:11px; border-radius:6px; background-color: #DC2626; border:none;" onclick="handleUserAction('${u.email}', 'reject')">Reject</button>
+        `;
+      }
 
       tr.innerHTML = `
         <td><strong>${u.name}</strong><br><span style="font-size:11px; color:var(--muted2);">${u.email}</span></td>
@@ -362,7 +408,7 @@
         <td>${u.dept}</td>
         <td><span class="pill ${pillClass}">${actionLabel}</span></td>
         <td>
-          <span style="font-size:12px; color:var(--muted2);">Database record</span>
+          ${actionsHTML}
         </td>
       `;
       tableBody.appendChild(tr);

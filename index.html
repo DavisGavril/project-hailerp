@@ -155,15 +155,27 @@
             </div>
 
             <div class="mb-3">
-              <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;" for="regDept">Department</label>
-              <select class="form-select" id="regDept" required style="border-radius: 8px; border: 1px solid #E2E5EC; padding: 10px 14px; font-size: 13.5px; width: 100%;">
-                <option value="" disabled selected>Select Department</option>
-                <option value="IT">Information Tech (IT)</option>
-                <option value="CSE">Computer Science (CSE)</option>
-                <option value="ECE">Electronics & Comm (ECE)</option>
-                <option value="Admin Office">Admin Office</option>
-              </select>
+              <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;">Department(s)</label>
+              <div id="regDeptContainer" style="display: flex; flex-direction: column; gap: 8px; border: 1px solid #E2E5EC; border-radius: 8px; padding: 10px 14px;">
+                <div class="form-check">
+                  <input class="form-check-input dept-checkbox" type="checkbox" value="IT" id="deptIT">
+                  <label class="form-check-label" style="font-size: 13px; color: #424751;" for="deptIT">Information Tech (IT)</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input dept-checkbox" type="checkbox" value="CSE" id="deptCSE">
+                  <label class="form-check-label" style="font-size: 13px; color: #424751;" for="deptCSE">Computer Science (CSE)</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input dept-checkbox" type="checkbox" value="ECE" id="deptECE">
+                  <label class="form-check-label" style="font-size: 13px; color: #424751;" for="deptECE">Electronics & Comm (ECE)</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input dept-checkbox" type="checkbox" value="Admin Office" id="deptAdmin">
+                  <label class="form-check-label" style="font-size: 13px; color: #424751;" for="deptAdmin">Admin Office</label>
+                </div>
+              </div>
             </div>
+
 
             <div class="mb-3">
               <label class="field-label" style="margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #424751; display: block;" for="regPassword">Set Password</label>
