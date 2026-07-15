@@ -322,6 +322,155 @@
 
   loadUserProfile();
 
+  async function initializeMentorFeature() {
+    const path = window.location.pathname.toLowerCase();
+    const apiBase = window.location.origin.startsWith('file://') || window.location.origin === 'null' ? 'http://localhost:8000' : window.location.origin;
+
+    // 1. Student Dashboard: Choose or view mentor
+    if (roleParam === 'student' && (path.includes('student-dashboard.html') || path.endsWith('student-dashboard') || path.endsWith('dashboard.html') || path.includes('/dashboard'))) {
+      const mentorContent = document.getElementById('mentorContent');
+      if (!mentorContent) return;
+
+      try {
+        const profileParams = new URLSearchParams({ email: emailParam, role: roleParam });
+        const profileRes = await fetch(`${apiBase}/api/profile?${profileParams.toString()}`);
+        const user = await profileRes.json();
+        
+        const mentorsRes = await fetch(`${apiBase}/api/mentors`);
+        const mentors = await mentorsRes.json();
+
+        const currentMentorEmail = user.mentor || '';
+
+        if (currentMentorEmail) {
+          const currentMentor = mentors.find(m => m.email.toLowerCase() === currentMentorEmail.toLowerCase());
+          const mentorName = currentMentor ? currentMentor.name : currentMentorEmail.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+          const initials = mentorName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+          mentorContent.innerHTML = `
+            <div style="background: rgba(0, 56, 116, 0.04); border-radius: 8px; padding: 16px; border: 1px dashed var(--border);">
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar" style="width: 48px; height: 48px; font-size: 16px; background: var(--navy); color: #FFF; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">
+                  ${initials}
+                </div>
+                <div>
+                  <h4 style="font-size: 14px; font-weight: 600; color: var(--ink); margin: 0;">${mentorName}</h4>
+                  <span style="font-size: 12px; color: var(--muted2);">${currentMentorEmail}</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-outline-danger mt-3 w-100" id="changeMentorBtn" style="border-radius: 6px; font-size: 12px;">
+                Change Academic Mentor
+              </button>
+            </div>
+          `;
+
+          document.getElementById('changeMentorBtn').addEventListener('click', () => {
+            renderChooseMentorUI(mentors);
+          });
+        } else {
+          renderChooseMentorUI(mentors);
+        }
+      } catch (err) {
+        console.error(err);
+        mentorContent.innerHTML = `<div style="color: var(--muted2); font-size: 12px; text-align: center;">Failed to load mentor details.</div>`;
+      }
+
+      function renderChooseMentorUI(mentors) {
+        let optionsHTML = '<option value="" disabled selected>Select Faculty Mentor</option>';
+        mentors.forEach(m => {
+          optionsHTML += `<option value="${m.email}">${m.name} (${m.email})</option>`;
+        });
+
+        mentorContent.innerHTML = `
+          <form id="chooseMentorForm" style="border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+            <div class="mb-3">
+              <label style="font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block;" for="mentorSelect">Choose Mentor</label>
+              <select class="form-select form-select-sm" id="mentorSelect" required style="border-radius:6px; font-size: 12.5px; width: 100%; padding: 6px 10px; border: 1px solid var(--border);">
+                ${optionsHTML}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-sm btn-navy w-100" style="border-radius: 6px; font-size: 12px; background: var(--navy); color: #FFF; border: none; padding: 8px; font-weight: 600;">
+              Confirm Mentor Selection
+            </button>
+          </form>
+        `;
+
+        document.getElementById('chooseMentorForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const mentorEmail = document.getElementById('mentorSelect').value;
+          try {
+            const res = await fetch(`${apiBase}/api/student/mentor`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: emailParam, mentorEmail })
+            });
+            if (res.ok) {
+              alert("Mentor selected successfully!");
+              initializeMentorFeature();
+            } else {
+              const err = await res.json();
+              alert(err.error || "Failed to choose mentor");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Network error choosing mentor.");
+          }
+        });
+      }
+    }
+
+    // 2. Faculty Dashboard: View mentees list
+    if (roleParam === 'faculty' && (path.includes('faculty-dashboard.html') || path.endsWith('faculty-dashboard') || path.includes('/faculty-dashboard'))) {
+      const menteesContent = document.getElementById('menteesContent');
+      if (!menteesContent) return;
+
+      try {
+        const menteesRes = await fetch(`${apiBase}/api/faculty/mentees?email=${encodeURIComponent(emailParam)}`);
+        const mentees = await menteesRes.json();
+
+        if (mentees.length > 0) {
+          let rowsHTML = '';
+          mentees.forEach(m => {
+            rowsHTML += `
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="font-size: 12.5px; padding: 10px;">${m.reg_id}</td>
+                <td style="font-size: 12.5px; padding: 10px; font-weight: 600;">${m.name}</td>
+                <td style="font-size: 12.5px; padding: 10px; color: var(--muted2);">${m.email}</td>
+                <td style="font-size: 12.5px; padding: 10px;">${m.dept}</td>
+              </tr>
+            `;
+          });
+
+          menteesContent.innerHTML = `
+            <div class="table-responsive" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px;">
+              <table class="data-table" style="width: 100%; border-collapse: collapse; margin: 0;">
+                <thead>
+                  <tr style="background: rgba(0, 0, 0, 0.02); border-bottom: 1px solid var(--border);">
+                    <th style="font-size: 11px; padding: 10px; text-align: left; font-weight: 600; color: var(--muted);">Roll No</th>
+                    <th style="font-size: 11px; padding: 10px; text-align: left; font-weight: 600; color: var(--muted);">Name</th>
+                    <th style="font-size: 11px; padding: 10px; text-align: left; font-weight: 600; color: var(--muted);">Email</th>
+                    <th style="font-size: 11px; padding: 10px; text-align: left; font-weight: 600; color: var(--muted);">Dept</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHTML}
+                </tbody>
+              </table>
+            </div>
+          `;
+        } else {
+          menteesContent.innerHTML = `
+            <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 100px; color: var(--muted2); border: 1px dashed var(--border); border-radius: 8px; padding: 20px; text-align: center;">
+              <i class="fa-solid fa-users-slash mb-2" style="font-size: 24px;"></i>
+              <span style="font-size: 12.5px;">No students have chosen you as their mentor yet.</span>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error(err);
+        menteesContent.innerHTML = `<div style="color: var(--muted2); font-size: 12px; text-align: center;">Failed to load mentees.</div>`;
+      }
+    }
+  }
 
   const initials = displayName
     .split(' ')
@@ -332,6 +481,7 @@
 
   // 3. UI Element Personalization
   document.addEventListener('DOMContentLoaded', () => {
+    initializeMentorFeature();
     // Dynamic Sidebar Nav Generation based on role
     const sidebarNav = document.querySelector('.sidebar-nav');
     if (sidebarNav) {

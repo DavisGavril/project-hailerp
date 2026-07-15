@@ -36,7 +36,13 @@ def init_db():
     db.login_logs.create_index("logged_at")
     # Migration: Set status="approved" for existing users
     db.users.update_many({"status": {"$exists": False}}, {"$set": {"status": "approved"}})
+    # Restore Davis' core role and custom erp_role
+    db.users.update_one(
+        {"email": "davis.gavril@institution.edu"},
+        {"$set": {"role": "student", "erp_role": "B.Tech IT Senior"}}
+    )
     seed_default_users()
+
 
 
 def seed_default_users():
@@ -152,7 +158,9 @@ def fetch_user(email):
         "reg_id": user["reg_id"],
         "status": user.get("status", "pending"),
         "phone": user.get("phone", ""),
-        "address": user.get("address", "")
+        "address": user.get("address", ""),
+        "mentor": user.get("mentor", ""),
+        "erp_role": user.get("erp_role", user["role"].capitalize())
     }
 
 
@@ -244,6 +252,18 @@ class EduPulseHandler(BaseHTTPRequestHandler):
                     students.append(u)
             self._send_json(students)
             return
+        if path == "/api/mentors":
+            db = get_db()
+            mentors = list(db.users.find({"role": "faculty", "status": "approved"}, {"_id": 0, "name": 1, "email": 1}))
+            self._send_json(mentors)
+            return
+        if path == "/api/faculty/mentees":
+            query = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            email = (query.get("email", [""])[0] or "").strip().lower()
+            db = get_db()
+            mentees = list(db.users.find({"role": "student", "mentor": email}, {"_id": 0, "password_hash": 0}))
+            self._send_json(mentees)
+            return
 
         if path in ["/", ""]:
             path = "/index.html"
@@ -302,12 +322,13 @@ class EduPulseHandler(BaseHTTPRequestHandler):
             update_fields = {}
             if phone: update_fields["phone"] = phone
             if address: update_fields["address"] = address
-            if role: update_fields["role"] = role.lower()
+            if role: update_fields["erp_role"] = role
             res = db.users.update_one({"email": email}, {"$set": update_fields})
             if res.matched_count == 0:
                 self._send_json({"error": "User not found"}, status=404)
                 return
             self._send_json({"message": "Profile updated successfully."})
+
         elif path == "/api/student/academics/update":
             email = payload.get("email", "").strip().lower()
             cgpa = payload.get("cgpa", "").strip()
@@ -332,8 +353,21 @@ class EduPulseHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": "User not found"}, status=404)
                 return
             self._send_json({"message": "Academics updated successfully."})
+        elif path == "/api/student/mentor":
+            email = payload.get("email", "").strip().lower()
+            mentor_email = payload.get("mentorEmail", "").strip().lower()
+            if not email:
+                self._send_json({"error": "Email is required"}, status=400)
+                return
+            db = get_db()
+            res = db.users.update_one({"email": email}, {"$set": {"mentor": mentor_email}})
+            if res.matched_count == 0:
+                self._send_json({"error": "User not found"}, status=404)
+                return
+            self._send_json({"message": "Mentor updated successfully."})
         else:
             self._send_json({"error": "Not found"}, status=404)
+
 
     def do_OPTIONS(self):
         self.send_response(204)
