@@ -309,15 +309,26 @@ class EduPulseHandler(BaseHTTPRequestHandler):
 
 
 def main():
-    init_db()
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "8000"))
-    print(f"EduPulse backend running on http://{host}:{port}")
+    print(f"EduPulse backend starting...")
     print(f"MongoDB endpoint: {MONGO_URI}")
     print(f"MongoDB database: {MONGO_DB_NAME}")
+    
+    try:
+        init_db()
+        print("Database initialized successfully.")
+    except Exception as exc:
+        print(f"DATABASE INIT ERROR: {exc}")
+        print("Make sure you have added the MONGO_URI environment variable in Render, and configured MongoDB Atlas Network Access (IP Whitelist) to allow access from anywhere (0.0.0.0/0).")
+        import sys
+        sys.exit(1)
+
+    print(f"EduPulse backend running on http://{host}:{port}")
     server = ThreadingHTTPServer((host, port), EduPulseHandler)
     server.serve_forever()
 
 
 if __name__ == "__main__":
     main()
+
